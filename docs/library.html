@@ -96,8 +96,21 @@
 <h3 id="load-data"><code>LoadData</code></h3>
 
 <pre><code class="lang-go">func LoadData(path string) (map[string]any, error)</code></pre>
-<p>Reads a JSON object for use as <code>Options.Data</code>. Numbers keep their original text (<code>12.50</code> stays <code>12.50</code>, not <code>12.5</code>).</p>
+<p>Reads a JSON object from a file for use as <code>Options.Data</code>. Numbers keep their original text (<code>12.50</code> stays <code>12.50</code>, not <code>12.5</code>).</p>
 
+<h3 id="parse-data"><code>ParseData</code></h3>
+
+<pre><code class="lang-go">func ParseData(r io.Reader) (map[string]any, error)</code></pre>
+<p>Like <code>LoadData</code>, but reads from any reader, such as a request body or an inline string (<code>strings.NewReader(s)</code>). The input must be exactly one JSON object.</p>
+
+<h3 id="merge-data"><code>MergeData</code></h3>
+
+<pre><code class="lang-go">func MergeData(base, overlay map[string]any) map[string]any</code></pre>
+<p>Deep-merges <code>overlay</code> into <code>base</code> and returns a new map. Nested objects are merged key by key, and any other value in <code>overlay</code> (including arrays and <code>null</code>) replaces the one in <code>base</code>. Neither argument is modified. This is what the CLI uses to combine several <code>--data</code> and <code>--json</code> sources.</p>
+
+<pre><code class="lang-go">defaults, _ := xml2pdf.LoadData("defaults.json")
+order, _ := xml2pdf.ParseData(r.Body)
+opts := xml2pdf.Options{Data: xml2pdf.MergeData(defaults, order)}</code></pre>
 <h3 id="options"><code>Options</code></h3>
 
 <pre><code class="lang-go">type Options struct {

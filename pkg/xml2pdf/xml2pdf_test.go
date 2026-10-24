@@ -2,9 +2,11 @@ package xml2pdf
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"strings"
 	"sync"
@@ -132,5 +134,62 @@ func TestConcurrentDeterministic(t *testing.T) {
 		if !bytes.Equal(outs[0], outs[i]) {
 			t.Fatalf("render %d produced different bytes", i)
 		}
+	}
+}
+
+func TestParseData(t *testing.T) {
+	m, err := ParseData(strings.NewReader(`{"price": 12.50, "n": {"x": [1, 2]}}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := fmt.Sprint(m["price"]); got != "12.50" {
+		t.Errorf("price = %s, want 12.50 (formatting kept)", got)
+	}
+	for in, want := range map[string]string{
+		``:                  "no JSON data",
+		`{bad`:              "invalid JSON",
+		`[1, 2]`:            "must be a JSON object",
+		`"text"`:            "must be a JSON object",
+		`null`:              "must be a JSON object",
+		`{"a": 1} {"b": 2}`: "unexpected data after the object",
+	} {
+		if _, err := ParseData(strings.NewReader(in)); err == nil || !strings.Contains(err.Error(), want) {
+			t.Errorf("ParseData(%q) = %v, want error containing %q", in, err, want)
+		}
+	}
+}
+
+func TestMergeData(t *testing.T) {
+	base := map[string]any{
+		"a":    "base",
+		"keep": "yes",
+		"obj":  map[string]any{"x": 1, "y": 2},
+		"list": []any{1, 2, 3},
+		"gone": "value",
+	}
+	overlay := map[string]any{
+		"a":    "overlay",
+		"obj":  map[string]any{"y": 20, "z": 30},
+		"list": []any{9},
+		"gone": nil,
+		"new":  true,
+	}
+	got := MergeData(base, overlay)
+	want := map[string]any{
+		"a":    "overlay",
+		"keep": "yes",
+		"obj":  map[string]any{"x": 1, "y": 20, "z": 30},
+		"list": []any{9},
+		"gone": nil,
+		"new":  true,
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("MergeData =\n  %v\nwant\n  %v", got, want)
+	}
+	if base["a"] != "base" || len(base["obj"].(map[string]any)) != 2 {
+		t.Error("MergeData modified its base argument")
+	}
+	if got := MergeData(nil, map[string]any{"k": 1}); got["k"] != 1 {
+		t.Errorf("MergeData(nil, ...) = %v", got)
 	}
 }

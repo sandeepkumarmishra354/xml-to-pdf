@@ -8,6 +8,7 @@ package xml2pdf
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -76,18 +77,59 @@ func RenderFile(in, out string, opts Options) error {
 	return os.WriteFile(out, buf.Bytes(), 0o644)
 }
 
-// LoadData reads a JSON object for use as Options.Data. Numbers keep their
-// original formatting (12.50 stays "12.50").
+// LoadData reads a JSON object from a file for use as Options.Data.
+// Numbers keep their original formatting (12.50 stays "12.50").
 func LoadData(path string) (map[string]any, error) {
-	b, err := os.ReadFile(path)
+	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
-	d := json.NewDecoder(bytes.NewReader(b))
-	d.UseNumber()
-	var m map[string]any
-	if err := d.Decode(&m); err != nil {
+	defer f.Close()
+	m, err := ParseData(f)
+	if err != nil {
 		return nil, fmt.Errorf("%s: %w", path, err)
 	}
 	return m, nil
+}
+
+// ParseData decodes a single JSON object for use as Options.Data. Numbers
+// keep their original formatting (12.50 stays "12.50").
+func ParseData(r io.Reader) (map[string]any, error) {
+	d := json.NewDecoder(r)
+	d.UseNumber()
+	var v any
+	if err := d.Decode(&v); err != nil {
+		if errors.Is(err, io.EOF) {
+			return nil, errors.New("no JSON data")
+		}
+		return nil, fmt.Errorf("invalid JSON: %w", err)
+	}
+	m, ok := v.(map[string]any)
+	if !ok {
+		return nil, errors.New("data must be a JSON object, like {\"name\": \"value\"}")
+	}
+	if err := d.Decode(new(any)); !errors.Is(err, io.EOF) {
+		return nil, errors.New("invalid JSON: unexpected data after the object")
+	}
+	return m, nil
+}
+
+// MergeData deep-merges overlay into base and returns the result: nested
+// objects are merged key by key, while arrays, scalars and null in overlay
+// replace the value in base. Neither input is modified.
+func MergeData(base, overlay map[string]any) map[string]any {
+	out := make(map[string]any, len(base)+len(overlay))
+	for k, v := range base {
+		out[k] = v
+	}
+	for k, v := range overlay {
+		if bm, ok := out[k].(map[string]any); ok {
+			if om, ok := v.(map[string]any); ok {
+				out[k] = MergeData(bm, om)
+				continue
+			}
+		}
+		out[k] = v
+	}
+	return out
 }

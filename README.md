@@ -54,18 +54,24 @@ make examples          # render examples/*.xml into bin/
 
 ```sh
 xml2pdf invoice.xml                                  # writes invoice.pdf
-xml2pdf invoice.xml -o out.pdf --data data.json      # values from JSON
-xml2pdf invoice.xml --set status=PAID --set n=42     # override values
+xml2pdf invoice.xml -o out.pdf --data data.json      # values from a JSON file
+xml2pdf invoice.xml --json '{"customer":{"name":"Globex"}}'   # inline JSON
+some-api | xml2pdf invoice.xml --data -              # JSON from stdin
+xml2pdf invoice.xml --data base.json --json '{"status":"PAID"}'  # merged, later wins
+xml2pdf invoice.xml --set status=PAID --set n=42     # override single values
 cat doc.xml | xml2pdf - -o - > doc.pdf               # stdin / stdout
 ```
 
 | Flag | Meaning |
 |---|---|
 | `-o FILE` | Output file. It defaults to the input name with `.pdf`. Use `-` for stdout. |
-| `--data FILE` | A JSON object whose values can be referenced as `${key}`, `${a.b}` or `${list.0.c}`. |
+| `--data FILE` | A JSON file containing an object. Its values are available as `${key}`, `${a.b}` or `${list.0.c}`, and its arrays work with `<for-each>`. Use `-` to read the JSON from stdin. |
+| `--json JSON` | The same as `--data`, but takes the JSON object inline, e.g. `--json '{"name":"Alice"}'`. |
 | `--base-dir DIR` | The directory that relative image paths resolve against. It defaults to the input file's directory, or the working directory when reading from stdin. |
-| `--set k=v` | Sets a variable. It can be repeated and takes priority over `--data` and constants. |
+| `--set k=v` | Sets a variable. It can be repeated and takes priority over `--data`, `--json` and constants. |
 | `--version` | Prints the version. |
+
+`--data` and `--json` can be repeated and mixed. They are deep-merged from left to right: nested objects combine key by key, and anything else (strings, numbers, arrays) is replaced by the later value. So `--data invoice.json --json '{"customer":{"name":"Initech"}}'` changes only the customer's name and keeps the rest of the file.
 
 ## Go library
 
@@ -94,7 +100,7 @@ Lengths are in **points** (1/72 inch) by default. You can also use `mm`, `cm`, `
 Values are looked up in this order, and the first match wins:
 
 1. `--set key=value` on the command line (or `Options.Vars`)
-2. the `--data` JSON file (or `Options.Data`); nested keys use dots, e.g. `${customer.name}` or `${items.0.price}`
+2. JSON data from `--data` and `--json` (or `Options.Data`); nested keys use dots, e.g. `${customer.name}` or `${items.0.price}`
 3. `<constants>` in the document
 
 Variables expand in every attribute and in every piece of text. Constants can reference other variables. An undefined variable is an error that reports its line number. Write `$${` to output a literal `${`.

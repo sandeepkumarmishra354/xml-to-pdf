@@ -131,7 +131,8 @@ make build          # static binary at bin/xml2pdf</code></pre>
 <tr><th>Flag</th><th>Description</th></tr>
 <tr><td><code>-o FILE</code></td><td>Output PDF path. The default is the input path with a <code>.pdf</code> extension (<code>report.xml</code> → <code>report.pdf</code>). Use <code>-</code> to write to standard output.</td></tr>
 <tr><td><code>--data FILE</code></td><td>A JSON file whose top level is an object. Its values are available as <code>${key}</code>, <code>${a.b}</code> or <code>${list.0.c}</code>, and its arrays can be looped over with <code>&lt;for-each&gt;</code>.</td></tr>
-<tr><td><code>--set KEY=VALUE</code></td><td>Sets a variable. Repeat it for several. It overrides <code>--data</code> and document constants.</td></tr>
+<tr><td><code>--json JSON</code></td><td>The same as <code>--data</code>, but takes the JSON object inline: <code>--json '{"name":"Alice"}'</code>. See <a href="#passing-data">Passing data</a>.</td></tr>
+<tr><td><code>--set KEY=VALUE</code></td><td>Sets a variable. Repeat it for several. It overrides <code>--data</code>, <code>--json</code> and document constants.</td></tr>
 <tr><td><code>--base-dir DIR</code></td><td>Directory that relative image paths resolve against. The default is the input file's directory, or the working directory when reading from stdin.</td></tr>
 <tr><td><code>--version</code></td><td>Prints the version and exits.</td></tr>
 <tr><td><code>-h</code>, <code>--help</code></td><td>Shows the help.</td></tr>
@@ -149,6 +150,12 @@ xml2pdf report.xml -o out/report-2026.pdf
 # Fill a template from JSON
 xml2pdf invoice.xml --data customers/globex.json -o globex.pdf
 
+# Inline JSON, no file needed
+xml2pdf invoice.xml --json '{"invoice_no":"42","items":[{"name":"Hosting","qty":1}]}'
+
+# JSON piped from another program
+curl -s https://api.example.com/invoices/42 | xml2pdf invoice.xml --data - -o 42.pdf
+
 # Override individual values (handy in scripts)
 xml2pdf invoice.xml --data globex.json --set status=PAID --set due_date=2026-12-01
 
@@ -159,6 +166,25 @@ generate-xml | xml2pdf - --base-dir ./assets -o - &gt; out.pdf
 for f in data/*.json; do
   xml2pdf template.xml --data "$f" -o "out/$(basename "$f" .json).pdf"
 done</code></pre>
+<h2 id="passing-data">Passing data</h2>
+<p>Templates get their values from JSON. There are three ways to supply it, and you can combine them:</p>
+<div class="table-wrap"><table>
+<tr><th>Source</th><th>Example</th></tr>
+<tr><td>A file</td><td><code>--data invoice.json</code></td></tr>
+<tr><td>Inline</td><td><code>--json '{"customer":{"name":"Globex"}}'</code></td></tr>
+<tr><td>Standard input</td><td><code>some-api | xml2pdf invoice.xml --data -</code></td></tr>
+</table></div>
+<p>The top level must be a JSON object. <code>--data</code> and <code>--json</code> can be repeated and mixed, and they're <strong>deep-merged from left to right</strong>: nested objects combine key by key, and any other value (string, number, boolean, array or <code>null</code>) is replaced by the later one.</p>
+
+<pre><code class="lang-sh"># Start from a file and override a nested field and a top-level value
+xml2pdf invoice.xml --data invoice.json --json '{"customer":{"name":"Initech"},"status":"PAID"}'
+# customer.address still comes from invoice.json
+
+# Shared defaults plus per-customer data
+xml2pdf invoice.xml --data defaults.json --data customers/globex.json</code></pre>
+<p>Finally, <code>--set key=value</code> overrides any single value, whatever its source. The full lookup order is described under <a href="guide.html#variables">Variables</a>.</p>
+<div class="note"><p><strong>Quoting:</strong> wrap inline JSON in single quotes in bash and zsh, so the shell leaves the double quotes alone. PowerShell 7.3 and newer also accept single quotes. Older Windows PowerShell and <code>cmd.exe</code> mangle the inner quotes; there, escape them (<code>--json "{\"name\":\"Alice\"}"</code>), or use a file or stdin instead. Standard input can be used only once, so <code>--data -</code> can't be combined with reading the XML from stdin.</p></div>
+
 <h2 id="exit-codes">Exit status and errors</h2>
 <p><code>xml2pdf</code> exits with <code>0</code> on success. On any error it prints a message to standard error, exits with <code>1</code>, and doesn't write the output file. Messages include the file and line:</p>
 

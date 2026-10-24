@@ -200,7 +200,7 @@
 <ol>
   <li>loop variables of the enclosing <a href="#loops"><code>&lt;for-each&gt;</code></a> loops (innermost first)</li>
   <li><code>--set name=value</code> on the command line (<code>Options.Vars</code> in Go)</li>
-  <li>the JSON data file given with <code>--data</code> (<code>Options.Data</code> in Go)</li>
+  <li>JSON data given with <code>--data</code> (a file or stdin) or <code>--json</code> (inline), deep-merged in the order given (<code>Options.Data</code> in Go)</li>
   <li><code>&lt;const&gt;</code> definitions in the document</li>
 </ol>
 
