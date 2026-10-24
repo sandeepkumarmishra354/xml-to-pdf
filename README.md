@@ -1,5 +1,10 @@
 # xml2pdf
 
+[![CI](https://github.com/sandeepkumarmishra354/xml-to-pdf/actions/workflows/ci.yml/badge.svg)](https://github.com/sandeepkumarmishra354/xml-to-pdf/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/sandeepkumarmishra354/xml-to-pdf)](https://github.com/sandeepkumarmishra354/xml-to-pdf/releases/latest)
+[![Go Reference](https://pkg.go.dev/badge/github.com/sandeepkumarmishra354/xml-to-pdf.svg)](https://pkg.go.dev/github.com/sandeepkumarmishra354/xml-to-pdf/pkg/xml2pdf)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Generate PDFs from a declarative XML description. You describe pages, text, images, tables, watermarks, headers and footers in XML, and `xml2pdf` lays them out (wrapping text, breaking pages, repeating table headers) and writes a PDF.
 
 - **Single static binary.** It's written in Go with no cgo and no runtime dependencies.
@@ -17,7 +22,17 @@ Generate PDFs from a declarative XML description. You describe pages, text, imag
 </document>
 ```
 
-## Install / build
+## Install
+
+**Download a binary** for Linux, macOS or Windows from the [latest release](https://github.com/sandeepkumarmishra354/xml-to-pdf/releases/latest), unpack it, and put `xml2pdf` on your `PATH`. Nothing else is needed.
+
+**With Go** (1.24+):
+
+```sh
+go install github.com/sandeepkumarmishra354/xml-to-pdf/cmd/xml2pdf@latest
+```
+
+**From source:**
 
 ```sh
 make build             # bin/xml2pdf (static)
@@ -26,7 +41,6 @@ make test              # run the test suite
 make examples          # render examples/*.xml into bin/
 ```
 
-You can also run `go install github.com/sandeepkumarmishra354/xml-to-pdf/cmd/xml2pdf@latest`.
 
 ## Command line
 
@@ -258,3 +272,18 @@ internal/layout    text wrapping, tables, pagination → drawing ops
 internal/render    drawing ops → PDF (go-pdf/fpdf)
 examples/          invoice.xml (+ invoice.json), report.xml
 ```
+
+## Releasing
+
+Releases are built by [GoReleaser](https://goreleaser.com) in GitHub Actions. To publish one, push a version tag:
+
+```sh
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The release workflow runs the tests, cross-compiles the binaries, and publishes a GitHub Release with archives, checksums and a changelog. Run `make snapshot` to try the release build locally; it needs `goreleaser` installed and writes to `dist/`.
+
+## License
+
+[MIT](LICENSE): free for personal and commercial use.

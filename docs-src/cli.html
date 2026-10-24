@@ -2,6 +2,19 @@
 <p class="lead">The <code>xml2pdf</code> binary renders one XML file to one PDF. It's a single static executable with no runtime dependencies.</p>
 
 <h2 id="install">Install</h2>
+<h3 id="download">Download a binary</h3>
+<p>Prebuilt binaries for Linux, macOS and Windows (amd64 and arm64) are attached to every <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf/releases/latest">GitHub release</a>. Download the archive for your platform, unpack it, and put <code>xml2pdf</code> somewhere on your <code>PATH</code>:</p>
+
+```sh
+# Example: Linux, x86-64 (replace VERSION with the release number, e.g. 0.1.0)
+curl -LO https://github.com/sandeepkumarmishra354/xml-to-pdf/releases/download/vVERSION/xml2pdf_VERSION_linux_amd64.tar.gz
+tar xzf xml2pdf_VERSION_linux_amd64.tar.gz
+sudo mv xml2pdf /usr/local/bin/
+xml2pdf --version
+```
+<p>Each archive also contains the README, the license and the example documents. <code>checksums.txt</code> in the release lists the SHA-256 of every archive.</p>
+<div class="note"><p><strong>macOS:</strong> the binaries aren't notarized. If macOS blocks the first run, allow it under System Settings → Privacy &amp; Security, or run <code>xattr -d com.apple.quarantine xml2pdf</code>.</p></div>
+
 <h3 id="go-install">With Go</h3>
 
 ```sh
@@ -86,5 +99,15 @@ xml2pdf: invoice.xml: line 41: undefined variable "customer.nmae"
 <tr><td><code>make examples</code></td><td>Renders <code>examples/*.xml</code> into <code>bin/</code>.</td></tr>
 <tr><td><code>make dist</code></td><td>Cross-compiles release binaries into <code>dist/</code>.</td></tr>
 <tr><td><code>make docs</code></td><td>Rebuilds this documentation site in <code>docs/</code>.</td></tr>
+<tr><td><code>make snapshot</code></td><td>Builds release archives locally with GoReleaser, without publishing.</td></tr>
 <tr><td><code>make clean</code></td><td>Removes <code>bin/</code> and <code>dist/</code>.</td></tr>
 </table></div>
+
+<h2 id="releasing">Releasing</h2>
+<p>Releases are automated with <a href="https://goreleaser.com">GoReleaser</a> and GitHub Actions. Pushing a tag that starts with <code>v</code> runs the tests, builds every platform, and publishes a GitHub Release with archives, checksums and a changelog:</p>
+
+```sh
+git tag v0.1.0
+git push origin v0.1.0
+```
+<p>Tags with a pre-release suffix, such as <code>v0.2.0-rc.1</code>, are marked as pre-releases automatically.</p>

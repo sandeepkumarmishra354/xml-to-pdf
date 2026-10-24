@@ -3,7 +3,7 @@ VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 LDFLAGS := -s -w -X main.version=$(VERSION)
 PLATFORMS := linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 windows/arm64
 
-.PHONY: build test vet examples docs dist clean
+.PHONY: build test vet examples docs dist snapshot clean
 
 build:
 	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/$(BINARY) ./cmd/xml2pdf
@@ -37,6 +37,10 @@ dist:
 		CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch go build -ldflags "$(LDFLAGS)" \
 			-o dist/$(BINARY)-$$os-$$arch$$ext ./cmd/xml2pdf || exit 1; \
 	done
+
+# Build release archives locally with GoReleaser (no publishing) into dist/.
+snapshot:
+	goreleaser release --snapshot --clean
 
 clean:
 	rm -rf bin dist
