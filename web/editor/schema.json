@@ -1,0 +1,170 @@
+{
+  "$comment": "xml2pdf vocabulary for editor autocomplete. Checked against the renderer by pkg/xml2pdf/schema_test.go: every attribute listed here must be accepted. 'context' is a document with {} where the element is inserted; 'required' and 'content' make the element valid.",
+  "styleAttributes": {
+    "style": [],
+    "font": ["helvetica", "times", "courier", "zapfdingbats"],
+    "size": [],
+    "font-size": [],
+    "bold": ["true", "false"],
+    "italic": ["true", "false"],
+    "underline": ["true", "false"],
+    "color": [],
+    "align": ["left", "center", "right", "justify"],
+    "line-height": [],
+    "margin-top": [],
+    "margin-bottom": [],
+    "bg": []
+  },
+  "elements": {
+    "document": {
+      "top": true,
+      "style": true,
+      "children": ["constants", "resources", "watermark", "header", "footer", "page", "for-each"],
+      "attributes": {
+        "title": [], "author": [], "subject": [], "keywords": [],
+        "page-size": ["A4", "A3", "A5", "Letter", "Legal", "Tabloid"],
+        "orientation": ["portrait", "landscape"],
+        "margin": []
+      },
+      "context": "{}",
+      "content": "<page/>"
+    },
+    "constants": {
+      "children": ["const"],
+      "attributes": {},
+      "context": "<document>{}<page/></document>"
+    },
+    "const": {
+      "children": [],
+      "attributes": { "name": [], "value": [] },
+      "required": "name=\"n\"",
+      "context": "<document><constants>{}</constants><page/></document>"
+    },
+    "resources": {
+      "children": ["image", "style"],
+      "attributes": {},
+      "context": "<document>{}<page/></document>"
+    },
+    "image": {
+      "children": [],
+      "attributes": { "id": [], "src": [] },
+      "required": "id=\"pic\" src=\"logo.png\"",
+      "context": "<document><resources>{}</resources><page/></document>"
+    },
+    "style": {
+      "style": true,
+      "children": [],
+      "attributes": { "id": [], "extends": [] },
+      "required": "id=\"s2\"",
+      "context": "<document><resources>{}</resources><page/></document>"
+    },
+    "watermark": {
+      "style": true,
+      "children": [],
+      "attributes": {
+        "text": [], "image": [], "src": [],
+        "opacity": [], "rotate": [],
+        "layer": ["front", "back"],
+        "pages": ["all", "first", "last", "odd", "even", "2-"],
+        "x": [], "y": [], "width": [], "height": []
+      },
+      "required": "text=\"DRAFT\"",
+      "context": "<document><resources><image id=\"img\" src=\"logo.png\"/></resources>{}<page/></document>"
+    },
+    "header": {
+      "style": true,
+      "children": ["text", "p", "img", "table", "spacer", "for-each", "b", "strong", "i", "em", "u", "span", "br"],
+      "attributes": { "height": [], "gap": [], "pages": ["all", "first", "last", "odd", "even", "2-"] },
+      "context": "<document>{}<page/></document>"
+    },
+    "footer": {
+      "style": true,
+      "children": ["text", "p", "img", "table", "spacer", "for-each", "b", "strong", "i", "em", "u", "span", "br"],
+      "attributes": { "height": [], "gap": [], "pages": ["all", "first", "last", "odd", "even", "2-"] },
+      "context": "<document>{}<page/></document>"
+    },
+    "page": {
+      "style": true,
+      "children": ["text", "p", "img", "table", "spacer", "page-break", "for-each", "b", "strong", "i", "em", "u", "span", "br"],
+      "attributes": {
+        "page-size": ["A4", "A3", "A5", "Letter", "Legal", "Tabloid"],
+        "orientation": ["portrait", "landscape"],
+        "margin": [],
+        "header": ["true", "false"],
+        "footer": ["true", "false"],
+        "watermark": ["true", "false"]
+      },
+      "context": "<document>{}</document>"
+    },
+    "text": {
+      "style": true,
+      "children": ["b", "strong", "i", "em", "u", "span", "br", "for-each"],
+      "attributes": { "x": [], "y": [], "width": [] },
+      "content": "Hello",
+      "context": "<document><page>{}</page></document>"
+    },
+    "p": {
+      "style": true,
+      "children": ["b", "strong", "i", "em", "u", "span", "br", "for-each"],
+      "attributes": { "x": [], "y": [], "width": [] },
+      "content": "Hello",
+      "context": "<document><page>{}</page></document>"
+    },
+    "b": { "style": true, "children": ["b", "strong", "i", "em", "u", "span", "br", "for-each"], "attributes": {}, "content": "x", "context": "<document><page><text>{}</text></page></document>" },
+    "strong": { "style": true, "children": ["b", "strong", "i", "em", "u", "span", "br", "for-each"], "attributes": {}, "content": "x", "context": "<document><page><text>{}</text></page></document>" },
+    "i": { "style": true, "children": ["b", "strong", "i", "em", "u", "span", "br", "for-each"], "attributes": {}, "content": "x", "context": "<document><page><text>{}</text></page></document>" },
+    "em": { "style": true, "children": ["b", "strong", "i", "em", "u", "span", "br", "for-each"], "attributes": {}, "content": "x", "context": "<document><page><text>{}</text></page></document>" },
+    "u": { "style": true, "children": ["b", "strong", "i", "em", "u", "span", "br", "for-each"], "attributes": {}, "content": "x", "context": "<document><page><text>{}</text></page></document>" },
+    "span": { "style": true, "children": ["b", "strong", "i", "em", "u", "span", "br", "for-each"], "attributes": {}, "content": "x", "context": "<document><page><text>{}</text></page></document>" },
+    "br": { "children": [], "attributes": {}, "context": "<document><page><text>a{}b</text></page></document>" },
+    "img": {
+      "style": true,
+      "children": [],
+      "attributes": { "ref": [], "src": [], "width": [], "height": [], "x": [], "y": [] },
+      "required": "src=\"logo.png\"",
+      "context": "<document><resources><image id=\"img\" src=\"logo.png\"/></resources><page>{}</page></document>"
+    },
+    "table": {
+      "style": true,
+      "children": ["row", "for-each"],
+      "attributes": {
+        "widths": [], "width": [], "border": [], "border-color": [], "padding": [],
+        "header-bg": [], "stripe": [], "repeat-header": ["true", "false"],
+        "x": [], "y": []
+      },
+      "content": "<row><cell>a</cell></row>",
+      "context": "<document><page>{}</page></document>"
+    },
+    "row": {
+      "style": true,
+      "children": ["cell", "for-each"],
+      "attributes": { "header": ["true", "false"], "height": [] },
+      "content": "<cell>a</cell>",
+      "context": "<document><page><table>{}</table></page></document>"
+    },
+    "cell": {
+      "style": true,
+      "children": ["text", "p", "img", "table", "spacer", "for-each", "b", "strong", "i", "em", "u", "span", "br"],
+      "attributes": { "colspan": [], "valign": ["top", "middle", "bottom"] },
+      "content": "a",
+      "context": "<document><page><table><row>{}</row></table></page></document>"
+    },
+    "spacer": {
+      "children": [],
+      "attributes": { "height": [] },
+      "required": "height=\"5mm\"",
+      "context": "<document><page>{}</page></document>"
+    },
+    "page-break": {
+      "children": [],
+      "attributes": {},
+      "context": "<document><page>a{}b</page></document>"
+    },
+    "for-each": {
+      "attributes": { "items": [], "var": [], "index": [], "number": [] },
+      "required": "items=\"items\"",
+      "content": "<text>row</text>",
+      "context": "<document><page>{}</page></document>"
+    }
+  }
+}

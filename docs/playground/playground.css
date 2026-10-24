@@ -225,3 +225,12 @@ body.pg {
   .pg-pages { overflow: visible; padding: 16px; }
   .topbar a.gh .txt { display: none; }
 }
+
+/* ---------- CodeMirror (editor.js) ---------- */
+.pg-code.cm-active { display: block; position: relative; }
+.pg-code.cm-active > .pg-gutter,
+.pg-code.cm-active > textarea { display: none; }
+.pg-code.cm-active > .cm-editor { position: absolute; inset: 0; }
+@media (max-width: 860px) {
+  .pg-code.cm-active > .cm-editor { position: absolute; }
+}

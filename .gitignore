@@ -7,3 +7,5 @@ dist/
 docs/playground/xml2pdf.wasm
 docs/playground/wasm_exec.js
 docs/playground/examples/
+docs/playground/editor.js
+web/editor/node_modules/

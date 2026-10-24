@@ -30,7 +30,7 @@ let renderSeq = 0;
 
 function save() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ xml: els.xml.value, json: els.json.value }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ xml: editors.xml.get(), json: editors.json.get() }));
   } catch (e) { /* storage unavailable: ignore */ }
 }
 
@@ -43,6 +43,52 @@ function restore() {
 }
 
 // ----------------------------------------------------------------- editor
+
+// The playground talks to editors through this small interface so the
+// CodeMirror upgrade (editor.js) and the plain-textarea fallback are
+// interchangeable: get(), set(text), jump(line), setError(line, msg).
+function textareaEditor(textarea) {
+  return {
+    get: () => textarea.value,
+    set: (text) => setText(textarea, text),
+    jump: (line) => jumpToLine(textarea, line),
+    setError() {},
+    focus: () => textarea.focus(),
+  };
+}
+const editors = { xml: textareaEditor(els.xml), json: textareaEditor(els.json) };
+globalThis.xml2pdfPlayground = editors;
+
+// Replaces the textareas with CodeMirror. On failure the textareas stay.
+async function upgradeEditors() {
+  let mod;
+  try {
+    mod = await import("./editor.js");
+  } catch (e) {
+    console.warn("Code editor unavailable, using plain text areas", e);
+    return;
+  }
+  for (const kind of ["xml", "json"]) {
+    const textarea = els[kind];
+    const box = textarea.parentNode;
+    const cm = mod.createEditor(box, {
+      doc: textarea.value,
+      language: kind,
+      onChange: scheduleRender,
+      onRun: render,
+      getVariables: kind === "xml" ? () => mod.variablesFromJSON(editors.json.get()) : undefined,
+    });
+    box.classList.add("cm-active");
+    editors[kind] = {
+      get: cm.getValue,
+      set: cm.setValue,
+      jump: (line) => { showTab(kind); cm.selectLine(line); },
+      setError: cm.setError,
+      focus: cm.focus,
+      view: cm.view,
+    };
+  }
+}
 
 function updateGutter(textarea) {
   const gutter = textarea.parentNode.querySelector(".pg-gutter");
@@ -97,7 +143,7 @@ function showTab(name) {
     $("tab-" + t).setAttribute("aria-selected", String(t === name));
     $("panel-" + t).hidden = t !== name;
   }
-  if (name !== "files") updateGutter(name === "xml" ? els.xml : els.json);
+  if (name !== "files" && !els[name].parentNode.classList.contains("cm-active")) updateGutter(els[name]);
 }
 
 // ----------------------------------------------------------------- images
@@ -157,7 +203,7 @@ function showError(message, line) {
   if (line && !isData) {
     els.errorLine.hidden = false;
     els.errorLine.textContent = `Go to line ${line}`;
-    els.errorLine.onclick = () => jumpToLine(els.xml, line);
+    els.errorLine.onclick = () => editors.xml.jump(line);
   } else if (isData) {
     els.errorLine.hidden = false;
     els.errorLine.textContent = "Open data";
@@ -165,6 +211,7 @@ function showError(message, line) {
   } else {
     els.errorLine.hidden = true;
   }
+  editors.xml.setError(line && !isData ? line : null, message);
   els.pages.classList.add("stale");
   els.status.textContent = lastPdf ? "Showing the last successful render." : "Nothing rendered yet.";
 }
@@ -174,12 +221,13 @@ function render() {
   save();
   if (!globalThis.xml2pdf) return;
   const seq = ++renderSeq;
-  const res = globalThis.xml2pdf.render(els.xml.value, els.json.value, Object.fromEntries(files));
+  const res = globalThis.xml2pdf.render(editors.xml.get(), editors.json.get(), Object.fromEntries(files));
   if (!res.ok) {
     showError(res.error, res.line);
     return;
   }
   els.error.hidden = true;
+  editors.xml.setError(null);
   lastPdf = res.pdf;
   els.download.disabled = false;
   showPdf(res.pdf, res.ms, seq);
@@ -237,8 +285,8 @@ async function loadExample(name) {
   const ex = EXAMPLES[name];
   if (!ex) return;
   const [xml, json] = await Promise.all([fetchText(ex.xml), ex.json ? fetchText(ex.json) : ""]);
-  setText(els.xml, xml);
-  setText(els.json, json);
+  editors.xml.set(xml);
+  editors.json.set(json);
   showTab("xml");
   render();
 }
@@ -262,7 +310,7 @@ async function streamBytes(bytes, transform) {
 }
 
 async function encodeState() {
-  const raw = new TextEncoder().encode(JSON.stringify({ x: els.xml.value, j: els.json.value }));
+  const raw = new TextEncoder().encode(JSON.stringify({ x: editors.xml.get(), j: editors.json.get() }));
   if (typeof CompressionStream === "function") {
     return "c=" + toBase64Url(await streamBytes(raw, new CompressionStream("deflate-raw")));
   }
@@ -370,16 +418,16 @@ async function main() {
   }
   if (!initial) initial = restore();
   if (initial) {
-    setText(els.xml, initial.xml);
-    setText(els.json, initial.json);
+    editors.xml.set(initial.xml);
+    editors.json.set(initial.json);
   } else {
     const [xml] = await Promise.all([fetchText(EXAMPLES.hello.xml).catch(() => "<document>\n  <page>Hello!</page>\n</document>\n")]);
-    setText(els.xml, xml);
-    setText(els.json, "");
+    editors.xml.set(xml);
+    editors.json.set("");
   }
 
   try {
-    [pdfjs] = await Promise.all([loadPdfjs(), startWasm(), logo]);
+    [pdfjs] = await Promise.all([loadPdfjs(), startWasm(), logo, upgradeEditors()]);
   } catch (e) {
     els.status.textContent = `Couldn't load the renderer: ${e.message}`;
     return;

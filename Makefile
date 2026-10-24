@@ -30,10 +30,13 @@ docs: build
 	python3 docs-src/build.py
 
 # Build the browser playground (docs/playground/) from the WebAssembly target.
-# Outputs are gitignored; the Pages workflow builds them on deploy.
+# Needs Go and Node.js (for the CodeMirror bundle). Outputs are gitignored;
+# the Pages workflow builds them on deploy.
 # Preview locally with: python3 -m http.server -d docs
 PLAYGROUND := docs/playground
 playground:
+	npm ci --prefix web/editor --no-audit --no-fund
+	npm run --prefix web/editor build
 	GOOS=js GOARCH=wasm go build -trimpath -ldflags "$(LDFLAGS)" -o $(PLAYGROUND)/xml2pdf.wasm ./cmd/xml2pdf-wasm
 	cp "$$(go env GOROOT)/lib/wasm/wasm_exec.js" $(PLAYGROUND)/
 	mkdir -p $(PLAYGROUND)/examples
@@ -53,4 +56,4 @@ snapshot:
 	goreleaser release --snapshot --clean
 
 clean:
-	rm -rf bin dist $(PLAYGROUND)/xml2pdf.wasm $(PLAYGROUND)/wasm_exec.js $(PLAYGROUND)/examples
+	rm -rf bin dist $(PLAYGROUND)/xml2pdf.wasm $(PLAYGROUND)/wasm_exec.js $(PLAYGROUND)/examples $(PLAYGROUND)/editor.js
