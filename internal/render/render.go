@@ -49,6 +49,9 @@ func Render(doc *model.Document, w io.Writer, opts Options) error {
 	pdf.SetSubject(doc.Subject, true)
 	pdf.SetKeywords(doc.Keywords, true)
 	pdf.SetCreator("xml2pdf", true)
+	// Order internal catalogs (fonts, images) consistently so identical
+	// input produces identical bytes.
+	pdf.SetCatalogSort(true)
 	if !opts.CreationDate.IsZero() {
 		pdf.SetCreationDate(opts.CreationDate)
 		pdf.SetModificationDate(opts.CreationDate)

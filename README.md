@@ -6,6 +6,8 @@ Generate PDFs from a declarative XML description. You describe pages, text, imag
 - **Fast.** A multi-page report renders in about 20 ms.
 - **Templating.** Constants live in the document, and values can be supplied from a JSON file or the command line with `${name}`. `<for-each>` repeats content once for each element of a data array.
 
+**Documentation:** https://sandeepkumarmishra354.github.io/xml-to-pdf/ (sources in `docs-src/`, rebuilt with `make docs`)
+
 ```xml
 <document title="Hello" page-size="A4" margin="20mm">
   <constants><const name="who" value="World"/></constants>
@@ -128,7 +130,7 @@ Text properties cascade from document to page to block to inline span:
 | Attribute | Values | Inherited |
 |---|---|---|
 | `style` | one or more named styles, e.g. `style="h1 muted"` | – |
-| `font` | `helvetica` (also `arial`, `sans`), `times` (`serif`), `courier` (`monospace`), `symbol`, `zapfdingbats` | yes |
+| `font` | `helvetica` (also `arial`, `sans`), `times` (`serif`), `courier` (`monospace`), `zapfdingbats` | yes |
 | `size` / `font-size` | font size, e.g. `11` | yes |
 | `bold`, `italic`, `underline` | `true` / `false` | yes |
 | `color` | `#rgb`, `#rrggbb`, `rgb(r,g,b)` or a name (`red`, `gray`, `navy`, …) | yes |

@@ -1,0 +1,88 @@
+<h1>Examples</h1>
+<p class="lead">Complete documents from the <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf/tree/main/examples"><code>examples/</code></a> folder, with their rendered output.</p>
+
+<h2 id="hello">Hello world</h2>
+<p>The smallest useful document: a constant, a named style, a footer with page numbers, a paragraph and a table.</p>
+<div class="split">
+<div>
+
+```xml
+{{file:examples/hello.xml}}
+```
+
+</div>
+<div>
+<img class="shot" src="assets/hello-1.png" alt="Rendered hello.xml" loading="lazy" width="467" height="662">
+<p style="text-align:center;font-size:14px"><a href="assets/hello.pdf">Download PDF</a></p>
+</div>
+</div>
+
+```sh
+xml2pdf examples/hello.xml --set name=Alice
+```
+
+<h2 id="invoice">Invoice</h2>
+<p>This example shows a data-driven document. Customer details and line items come from a JSON file, and the item rows are generated with <code>&lt;for-each&gt;</code>. It also uses:</p>
+<ul>
+  <li>an absolutely positioned title block</li>
+  <li>a borderless two-column table for the addresses</li>
+  <li>a striped item table with a colored header</li>
+  <li>a <code>DRAFT</code> watermark whose text comes from a variable</li>
+  <li>a header that only appears from page 2 onwards</li>
+</ul>
+
+```sh
+xml2pdf examples/invoice.xml --data examples/invoice.json -o invoice.pdf
+xml2pdf examples/invoice.xml --data examples/invoice.json --set status=PAID
+```
+
+<div class="split">
+<div>
+<img class="shot" src="assets/invoice-1.png" alt="Rendered invoice" loading="lazy" width="662" height="936">
+<p style="text-align:center;font-size:14px"><a href="assets/invoice.pdf">Download PDF</a></p>
+</div>
+<div>
+
+```json
+{{file:examples/invoice.json}}
+```
+
+</div>
+</div>
+
+<h3 id="invoice-source">invoice.xml</h3>
+
+```xml
+{{file:examples/invoice.xml}}
+```
+
+<h2 id="report">Multi-page report</h2>
+<p>A 5-page report that shows layout features:</p>
+<ul>
+  <li>a cover page without a header</li>
+  <li>a table that continues across pages, repeating its header row</li>
+  <li>a header from page 2 onwards</li>
+  <li>a back-layer image watermark and a front "CONFIDENTIAL" stamp on every page</li>
+  <li>an explicit page break</li>
+  <li>long-word breaking and Latin-1 text</li>
+  <li>a final landscape page with its own margin</li>
+</ul>
+
+```sh
+xml2pdf examples/report.xml
+```
+
+<div class="gallery">
+  <figure><img src="assets/report-1.png" alt="Report page 1: cover" loading="lazy" width="680" height="880"><figcaption>1 · Cover (no header)</figcaption></figure>
+  <figure><img src="assets/report-2.png" alt="Report page 2: summary and incident table" loading="lazy" width="680" height="880"><figcaption>2 · Table starts</figcaption></figure>
+  <figure><img src="assets/report-3.png" alt="Report page 3: table continues" loading="lazy" width="680" height="880"><figcaption>3 · Header row repeated</figcaption></figure>
+  <figure><img src="assets/report-4.png" alt="Report page 4: appendix after a page break" loading="lazy" width="680" height="880"><figcaption>4 · After &lt;page-break/&gt;</figcaption></figure>
+  <figure><img src="assets/report-5.png" alt="Report page 5: landscape" loading="lazy" width="880" height="680"><figcaption>5 · Landscape page</figcaption></figure>
+</div>
+<p><a href="assets/report.pdf">Download the PDF</a></p>
+
+<h3 id="report-source">report.xml</h3>
+
+```xml
+{{file:examples/report.xml}}
+```

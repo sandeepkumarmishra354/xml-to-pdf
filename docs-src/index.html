@@ -1,0 +1,65 @@
+<h1>xml2pdf</h1>
+<p class="lead">Describe a document in XML (pages, text, images, tables, watermarks, headers and footers) and get a PDF. It ships as a single static binary with no runtime dependencies and renders in milliseconds.</p>
+
+<div class="split">
+<div>
+
+```xml
+{{file:examples/hello.xml}}
+```
+
+</div>
+<div>
+<img class="shot" src="assets/hello-1.png" alt="The rendered hello.xml: a title, a paragraph with bold, italic and red text, a small table and a page footer." width="467" height="662">
+<p style="font-size:14px;color:var(--fg-muted);text-align:center"><a href="assets/hello.pdf">hello.pdf</a> rendered from the XML on the left</p>
+</div>
+</div>
+
+<h2 id="features">Features</h2>
+<ul>
+  <li><strong>Text:</strong> automatic wrapping; left, center, right and justified alignment; inline <code>&lt;b&gt;</code>, <code>&lt;i&gt;</code>, <code>&lt;u&gt;</code>, <code>&lt;span&gt;</code> and <code>&lt;br/&gt;</code>.</li>
+  <li><strong>Images:</strong> PNG, JPEG and GIF, scaled with their aspect ratio preserved.</li>
+  <li><strong>Tables:</strong> fractional, fixed and percentage column widths, <code>colspan</code>, vertical alignment, borders, padding and striped rows. When a table crosses a page break, its header rows repeat.</li>
+  <li><strong>Layout:</strong> content flows from page to page automatically, and any element can be pinned to exact <code>x</code>/<code>y</code> coordinates.</li>
+  <li><strong>Watermarks:</strong> text or image, with opacity, rotation, a front or back layer, and a choice of pages.</li>
+  <li><strong>Headers and footers:</strong> support <code>{page}</code> and <code>{pages}</code> numbering.</li>
+  <li><strong>Styles:</strong> reusable named styles with inheritance, and a cascade from document to page to element.</li>
+  <li><strong>Templating:</strong> <code>${variables}</code> come from constants in the document, a JSON data file or the command line. <code>&lt;for-each&gt;</code> loops repeat rows, blocks or whole pages.</li>
+  <li><strong>Helpful errors:</strong> unknown tags or attributes, missing styles, undefined variables and missing images are reported with their line number.</li>
+</ul>
+
+<h2 id="quick-start">Quick start</h2>
+<p>Build the binary (Go 1.24 or newer):</p>
+
+```sh
+git clone https://github.com/sandeepkumarmishra354/xml-to-pdf
+cd xml-to-pdf
+make build                      # produces bin/xml2pdf
+```
+
+<p>Render a document:</p>
+
+```sh
+bin/xml2pdf examples/hello.xml                       # writes examples/hello.pdf
+bin/xml2pdf examples/hello.xml --set name=Alice      # override a variable
+bin/xml2pdf examples/invoice.xml --data examples/invoice.json -o invoice.pdf
+```
+
+<p>Every document has a <code>&lt;document&gt;</code> root with one or more <code>&lt;page&gt;</code> elements. Everything else is optional. The <a href="guide.html">guide</a> explains how it all fits together, and the <a href="reference.html">element reference</a> lists every tag and attribute.</p>
+
+<h2 id="next">Where to next</h2>
+<div class="cards">
+  <a class="card" href="guide.html"><strong>Guide</strong><span>Units, layout and pagination, styles, variables, loops, headers, watermarks.</span></a>
+  <a class="card" href="reference.html"><strong>Element reference</strong><span>Every XML tag with its attributes, defaults and examples.</span></a>
+  <a class="card" href="cli.html"><strong>Command line</strong><span>Flags, data files, stdin and stdout, building and cross-compiling.</span></a>
+  <a class="card" href="library.html"><strong>Go library</strong><span>Embed the renderer in your own Go programs and servers.</span></a>
+  <a class="card" href="examples.html"><strong>Examples</strong><span>A full invoice and a multi-page report, with source and output.</span></a>
+</div>
+
+<h2 id="gallery">Gallery</h2>
+<div class="gallery">
+  <figure><a href="examples.html#invoice"><img src="assets/invoice-1.png" alt="Invoice example" loading="lazy" width="662" height="936"></a><figcaption>Invoice (data from JSON)</figcaption></figure>
+  <figure><a href="examples.html#report"><img src="assets/report-1.png" alt="Report cover page" loading="lazy" width="680" height="880"></a><figcaption>Report: cover page</figcaption></figure>
+  <figure><a href="examples.html#report"><img src="assets/report-2.png" alt="Report page with table" loading="lazy" width="680" height="880"></a><figcaption>Report: a table across pages</figcaption></figure>
+  <figure><a href="examples.html#report"><img src="assets/report-5.png" alt="Report landscape page" loading="lazy" width="880" height="680"></a><figcaption>Report: landscape page</figcaption></figure>
+</div>

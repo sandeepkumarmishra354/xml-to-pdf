@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Element reference · xml2pdf</title>
+<meta name="description" content="xml2pdf: generate PDFs from declarative XML. Documentation for the XML tags, attributes, command line tool and Go library.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e9c'/%3E%3Ctext x='16' y='21' font-size='13' text-anchor='middle' fill='white' font-family='monospace'%3E%3C/%3E%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="Toggle navigation"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="logo">&lt;/&gt;</span>xml2pdf</a>
+  <span class="spacer"></span>
+  <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
+  <a class="gh" href="https://github.com/sandeepkumarmishra354/xml-to-pdf"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg><span class="txt">Source</span></a>
+</header>
+<div class="layout">
+<nav class="sidebar" aria-label="Documentation">
+<h4>Getting started</h4>
+<ul>
+<li><a href="index.html">Overview</a>
+</li>
+<li><a href="cli.html">Command line</a>
+</li>
+<li><a href="library.html">Go library</a>
+</li>
+</ul>
+<h4>Writing documents</h4>
+<ul>
+<li><a href="guide.html">Guide</a>
+<ul>
+<li><a href="guide.html#structure">Document structure</a></li>
+<li><a href="guide.html#units">Units</a></li>
+<li><a href="guide.html#pages">Page setup</a></li>
+<li><a href="guide.html#layout">Layout &amp; pagination</a></li>
+<li><a href="guide.html#text">Text &amp; fonts</a></li>
+<li><a href="guide.html#styles">Styles</a></li>
+<li><a href="guide.html#colors">Colors</a></li>
+<li><a href="guide.html#variables">Variables</a></li>
+<li><a href="guide.html#loops">Loops</a></li>
+<li><a href="guide.html#bands">Headers &amp; footers</a></li>
+<li><a href="guide.html#watermarks">Watermarks</a></li>
+<li><a href="guide.html#page-selectors">Page selectors</a></li>
+<li><a href="guide.html#errors">Errors</a></li>
+<li><a href="guide.html#limitations">Limitations</a></li>
+</ul>
+</li>
+<li><a href="reference.html">Element reference</a>
+<ul>
+<li><a href="reference.html#document">&lt;document&gt;</a></li>
+<li><a href="reference.html#constants">&lt;constants&gt;</a></li>
+<li><a href="reference.html#resources">&lt;resources&gt;</a></li>
+<li><a href="reference.html#page">&lt;page&gt;</a></li>
+<li><a href="reference.html#header-footer">&lt;header&gt; / &lt;footer&gt;</a></li>
+<li><a href="reference.html#watermark">&lt;watermark&gt;</a></li>
+<li><a href="reference.html#text">&lt;text&gt;</a></li>
+<li><a href="reference.html#inline">Inline tags</a></li>
+<li><a href="reference.html#img">&lt;img&gt;</a></li>
+<li><a href="reference.html#table">&lt;table&gt;</a></li>
+<li><a href="reference.html#row">&lt;row&gt;</a></li>
+<li><a href="reference.html#cell">&lt;cell&gt;</a></li>
+<li><a href="reference.html#spacer">&lt;spacer&gt;</a></li>
+<li><a href="reference.html#page-break">&lt;page-break&gt;</a></li>
+<li><a href="reference.html#for-each">&lt;for-each&gt;</a></li>
+<li><a href="reference.html#style-attributes">Style attributes</a></li>
+</ul>
+</li>
+</ul>
+<h4>More</h4>
+<ul>
+<li><a href="examples.html">Examples</a>
+</li>
+</ul>
+</nav>
+<main>
+<h1>Element reference</h1>
+<p class="lead">Every element and attribute xml2pdf understands. Unknown elements and attributes are errors, so a typo is never silently ignored.</p>
+
+<ul class="tag-list">
+  <li><a href="#document">document</a></li>
+  <li><a href="#constants">constants</a></li>
+  <li><a href="#const">const</a></li>
+  <li><a href="#resources">resources</a></li>
+  <li><a href="#resource-image">image</a></li>
+  <li><a href="#resource-style">style</a></li>
+  <li><a href="#page">page</a></li>
+  <li><a href="#header-footer">header</a></li>
+  <li><a href="#header-footer">footer</a></li>
+  <li><a href="#watermark">watermark</a></li>
+  <li><a href="#text">text</a></li>
+  <li><a href="#inline">b · i · u · span · br</a></li>
+  <li><a href="#img">img</a></li>
+  <li><a href="#table">table</a></li>
+  <li><a href="#row">row</a></li>
+  <li><a href="#cell">cell</a></li>
+  <li><a href="#spacer">spacer</a></li>
+  <li><a href="#page-break">page-break</a></li>
+  <li><a href="#for-each">for-each</a></li>
+</ul>
+
+<div class="note"><p>Any attribute value can contain <code>${variables}</code>, and most elements also accept the <a href="#style-attributes">style attributes</a> (<code>font</code>, <code>size</code>, <code>color</code>, <code>align</code>, …). Lengths are in points unless given a unit; see <a href="guide.html#units">Units</a>.</p></div>
+
+<!-- ======================================================= -->
+<h2 id="document"><code>&lt;document&gt;</code></h2>
+<p>The root element. It must contain at least one <code>&lt;page&gt;</code>.</p>
+<p><strong>Children:</strong> <code>&lt;constants&gt;</code>, <code>&lt;resources&gt;</code>, <code>&lt;watermark&gt;</code>, <code>&lt;header&gt;</code> (at most one), <code>&lt;footer&gt;</code> (at most one), <code>&lt;page&gt;</code>, <code>&lt;for-each&gt;</code>.</p>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>title</code></td><td>text</td><td class="default">–</td><td>PDF metadata title, shown in viewer title bars.</td></tr>
+<tr><td><code>author</code></td><td>text</td><td class="default">–</td><td>PDF metadata author.</td></tr>
+<tr><td><code>subject</code></td><td>text</td><td class="default">–</td><td>PDF metadata subject.</td></tr>
+<tr><td><code>keywords</code></td><td>text</td><td class="default">–</td><td>PDF metadata keywords.</td></tr>
+<tr><td><code>page-size</code></td><td><code>A3</code> <code>A4</code> <code>A5</code> <code>Letter</code> <code>Legal</code> <code>Tabloid</code> or <code>WxH</code></td><td class="default"><code>A4</code></td><td>Default page size, e.g. <code>100mmx150mm</code>. See <a href="guide.html#pages">Page setup</a>.</td></tr>
+<tr><td><code>orientation</code></td><td><code>portrait</code> <code>landscape</code></td><td class="default"><code>portrait</code></td><td>Default orientation.</td></tr>
+<tr><td><code>margin</code></td><td>1–4 lengths</td><td class="default"><code>0.5in</code></td><td>Default page margins (top right bottom left).</td></tr>
+<tr><td colspan="4"><a href="#style-attributes">Style attributes</a>: the base style for the whole document. The defaults are Helvetica, 11pt, black, left-aligned, line-height 1.2.</td></tr>
+</table></div>
+
+<pre><code class="lang-xml">&lt;document title="Invoice ${no}" author="Acme" page-size="A4" margin="20mm" font="helvetica" size="10"&gt;
+  ...
+&lt;/document&gt;</code></pre>
+<!-- ======================================================= -->
+<h2 id="constants"><code>&lt;constants&gt;</code></h2>
+<p>Declares named values that can be referenced as <code>${name}</code>. It's allowed directly under <code>&lt;document&gt;</code>. Values from <code>--data</code> and <code>--set</code> override constants with the same name. See <a href="guide.html#variables">Variables</a>.</p>
+<h3 id="const"><code>&lt;const&gt;</code></h3>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>name</code></td><td>identifier</td><td class="default">required</td><td>Letters, digits, <code>_</code>, <code>-</code> and <code>.</code>, starting with a letter or <code>_</code>. Must be unique.</td></tr>
+<tr><td><code>value</code></td><td>text</td><td class="default">element text</td><td>The value. If it's omitted, the element's text content is used instead, which suits long values. It may reference other variables.</td></tr>
+</table></div>
+
+<pre><code class="lang-xml">&lt;constants&gt;
+  &lt;const name="company" value="Acme Corp"/&gt;
+  &lt;const name="disclaimer"&gt;All prices include VAT. ${company} reserves the right to change prices.&lt;/const&gt;
+&lt;/constants&gt;</code></pre>
+<!-- ======================================================= -->
+<h2 id="resources"><code>&lt;resources&gt;</code></h2>
+<p>Declares images and named styles that are referenced elsewhere by <code>id</code>. It's allowed directly under <code>&lt;document&gt;</code>. Resources can be used anywhere in the document, regardless of where they're declared.</p>
+
+<h3 id="resource-image"><code>&lt;image&gt;</code> (resource)</h3>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>id</code></td><td>name</td><td class="default">required</td><td>The name used by <code>&lt;img ref&gt;</code> and <code>&lt;watermark image&gt;</code>.</td></tr>
+<tr><td><code>src</code></td><td>file path</td><td class="default">required</td><td>A PNG, JPEG or GIF file. Relative paths resolve against the XML file's directory (or <code>--base-dir</code>). A missing file is an error.</td></tr>
+</table></div>
+
+<h3 id="resource-style"><code>&lt;style&gt;</code> (resource)</h3>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>id</code></td><td>name</td><td class="default">required</td><td>The name used in <code>style="..."</code>.</td></tr>
+<tr><td><code>extends</code></td><td>style ids</td><td class="default">–</td><td>One or more parent styles (space-separated) whose properties this style starts from. Cycles are errors.</td></tr>
+<tr><td colspan="4">Any <a href="#style-attributes">style attributes</a>. A style may also use <code>style="..."</code> to include other styles.</td></tr>
+</table></div>
+
+<pre><code class="lang-xml">&lt;resources&gt;
+  &lt;image id="logo" src="images/logo.png"/&gt;
+  &lt;style id="h1" size="20" bold="true" color="#1f4e9c" margin-bottom="8"/&gt;
+  &lt;style id="h2" extends="h1" size="14"/&gt;
+&lt;/resources&gt;</code></pre>
+<!-- ======================================================= -->
+<h2 id="page"><code>&lt;page&gt;</code></h2>
+<p>A page of content. Each <code>&lt;page&gt;</code> starts a new physical page, and its content continues onto more pages as needed, all with the same settings. See <a href="guide.html#layout">Layout &amp; pagination</a>.</p>
+<p><strong>Children:</strong> blocks (<code>&lt;text&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;table&gt;</code>, <code>&lt;spacer&gt;</code>, <code>&lt;page-break&gt;</code>), <code>&lt;for-each&gt;</code>, and loose inline text, which becomes a paragraph.</p>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>page-size</code></td><td>as on <code>&lt;document&gt;</code></td><td class="default">document's</td><td>Page size for this page.</td></tr>
+<tr><td><code>orientation</code></td><td><code>portrait</code> <code>landscape</code></td><td class="default">document's</td><td>Orientation for this page.</td></tr>
+<tr><td><code>margin</code></td><td>1–4 lengths</td><td class="default">document's</td><td>Margins for this page.</td></tr>
+<tr><td><code>header</code></td><td><code>true</code> <code>false</code></td><td class="default"><code>true</code></td><td>Show the document header. With <code>false</code>, the space is given to the content.</td></tr>
+<tr><td><code>footer</code></td><td><code>true</code> <code>false</code></td><td class="default"><code>true</code></td><td>Show the document footer.</td></tr>
+<tr><td><code>watermark</code></td><td><code>true</code> <code>false</code></td><td class="default"><code>true</code></td><td>Show watermarks.</td></tr>
+<tr><td colspan="4"><a href="#style-attributes">Style attributes</a>: inherited by all content on the page.</td></tr>
+</table></div>
+
+<pre><code class="lang-xml">&lt;page header="false" align="center"&gt;        &lt;!-- cover page --&gt;
+  &lt;spacer height="2in"/&gt;
+  &lt;text size="28" bold="true"&gt;Annual Report&lt;/text&gt;
+&lt;/page&gt;
+&lt;page orientation="landscape"&gt;...&lt;/page&gt;</code></pre>
+<!-- ======================================================= -->
+<h2 id="header-footer"><code>&lt;header&gt;</code> / <code>&lt;footer&gt;</code></h2>
+<p>Content repeated at the top or bottom of pages, inside the margins. In their text, <code>{page}</code> and <code>{pages}</code> become the current page number and the total page count. See <a href="guide.html#bands">Headers &amp; footers</a>.</p>
+<p><strong>Children:</strong> the same as <code>&lt;page&gt;</code>. Absolutely positioned blocks inside them use page coordinates.</p>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>height</code></td><td>length</td><td class="default">content height</td><td>Fixed band height.</td></tr>
+<tr><td><code>gap</code></td><td>length</td><td class="default"><code>6</code></td><td>Space between the band and the page content.</td></tr>
+<tr><td><code>pages</code></td><td><a href="guide.html#page-selectors">page selector</a></td><td class="default"><code>all</code></td><td>The pages to show the band on. Its space is reserved on every page either way.</td></tr>
+<tr><td colspan="4"><a href="#style-attributes">Style attributes</a>, inherited from the document style.</td></tr>
+</table></div>
+
+<pre><code class="lang-xml">&lt;header pages="2-"&gt;
+  &lt;table widths="1*,1*" border="0" padding="0" size="8" color="gray"&gt;
+    &lt;row&gt;&lt;cell&gt;Quarterly report&lt;/cell&gt;&lt;cell align="right"&gt;Q3 2026&lt;/cell&gt;&lt;/row&gt;
+  &lt;/table&gt;
+&lt;/header&gt;
+&lt;footer&gt;&lt;text align="center" size="8"&gt;Page {page} of {pages}&lt;/text&gt;&lt;/footer&gt;</code></pre>
+<!-- ======================================================= -->
+<h2 id="watermark"><code>&lt;watermark&gt;</code></h2>
+<p>Text or an image drawn across pages, rotated and semi-transparent. You can declare any number of them. It needs exactly one of <code>text</code> (or text content), <code>image</code> or <code>src</code>. See <a href="guide.html#watermarks">Watermarks</a>.</p>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>text</code></td><td>text</td><td class="default">–</td><td>Watermark text. It can also be given as the element's content, and may use <code>{page}</code> and <code>{pages}</code>.</td></tr>
+<tr><td><code>image</code></td><td>image id</td><td class="default">–</td><td>An image resource.</td></tr>
+<tr><td><code>src</code></td><td>file path</td><td class="default">–</td><td>An image file.</td></tr>
+<tr><td><code>opacity</code></td><td><code>0</code>–<code>1</code></td><td class="default"><code>0.15</code></td><td>Transparency.</td></tr>
+<tr><td><code>rotate</code></td><td>degrees</td><td class="default"><code>45</code></td><td>Counter-clockwise rotation around the center point.</td></tr>
+<tr><td><code>layer</code></td><td><code>front</code> <code>back</code></td><td class="default"><code>front</code></td><td>Draw over or beneath the page content.</td></tr>
+<tr><td><code>x</code>, <code>y</code></td><td>length or %</td><td class="default">page center</td><td>Center point, measured from the page's top-left corner.</td></tr>
+<tr><td><code>width</code>, <code>height</code></td><td>length or %</td><td class="default"><code>50%</code> of page width</td><td>Image size. If only one is set, the aspect ratio is kept.</td></tr>
+<tr><td><code>pages</code></td><td><a href="guide.html#page-selectors">page selector</a></td><td class="default"><code>all</code></td><td>The pages to draw on.</td></tr>
+<tr><td colspan="4"><a href="#style-attributes">Style attributes</a> for text watermarks. The defaults are <code>size="60"</code>, <code>bold="true"</code> and a medium gray color.</td></tr>
+</table></div>
+
+<pre><code class="lang-xml">&lt;watermark text="DRAFT" size="100" color="#1f4e9c" opacity="0.12"/&gt;
+&lt;watermark image="logo" width="60%" opacity="0.06" rotate="30" layer="back" pages="2-"/&gt;</code></pre>
+<!-- ======================================================= -->
+<h2 id="text"><code>&lt;text&gt;</code></h2>
+<p>A paragraph. Whitespace is collapsed, lines wrap to the available width, and long words break at character boundaries. <code>&lt;p&gt;</code> is an alias.</p>
+<p><strong>Children:</strong> text and <a href="#inline">inline tags</a> only.</p>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>x</code>, <code>y</code></td><td>length or %</td><td class="default">–</td><td>Absolute position of the paragraph's top-left corner. See <a href="guide.html#absolute">absolute positioning</a>.</td></tr>
+<tr><td><code>width</code></td><td>length or %</td><td class="default">available width</td><td>Paragraph box width. In the flow it can only make the box narrower.</td></tr>
+<tr><td colspan="4"><a href="#style-attributes">Style attributes</a>, including <code>align</code> (<code>left</code>, <code>center</code>, <code>right</code>, <code>justify</code>), <code>line-height</code>, <code>margin-top</code> and <code>margin-bottom</code>.</td></tr>
+</table></div>
+
+<pre><code class="lang-xml">&lt;text style="body" align="justify" margin-bottom="8"&gt;
+  Payment is due within &lt;b&gt;30 days&lt;/b&gt;. Questions? Email &lt;u&gt;billing@example.com&lt;/u&gt;.
+&lt;/text&gt;</code></pre>
+<h3 id="inline">Inline tags</h3>
+<p>These are allowed inside <code>&lt;text&gt;</code>, and anywhere loose inline text is allowed. They can be nested.</p>
+<div class="table-wrap"><table>
+<tr><th>Tag</th><th>Effect</th><th>Attributes</th></tr>
+<tr><td><code>&lt;b&gt;</code>, <code>&lt;strong&gt;</code></td><td>bold</td><td><a href="#style-attributes">style attributes</a></td></tr>
+<tr><td><code>&lt;i&gt;</code>, <code>&lt;em&gt;</code></td><td>italic</td><td><a href="#style-attributes">style attributes</a></td></tr>
+<tr><td><code>&lt;u&gt;</code></td><td>underline</td><td><a href="#style-attributes">style attributes</a></td></tr>
+<tr><td><code>&lt;span&gt;</code></td><td>no effect of its own</td><td><a href="#style-attributes">style attributes</a>, e.g. <code>&lt;span color="red" size="14"&gt;</code></td></tr>
+<tr><td><code>&lt;br/&gt;</code></td><td>line break</td><td>none</td></tr>
+</table></div>
+
+<!-- ======================================================= -->
+<h2 id="img"><code>&lt;img&gt;</code></h2>
+<p>An image. <code>&lt;image&gt;</code> is an alias when used inside a page. It needs either <code>ref</code> or <code>src</code>. Images are never stretched beyond the available width or the content height; they're scaled down to fit instead.</p>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>ref</code></td><td>image id</td><td class="default">–</td><td>An image declared in <code>&lt;resources&gt;</code>.</td></tr>
+<tr><td><code>src</code></td><td>file path</td><td class="default">–</td><td>An image file (PNG, JPEG, GIF), relative to the XML file.</td></tr>
+<tr><td><code>width</code></td><td>length or %</td><td class="default">natural size</td><td>Display width. If only <code>width</code> or only <code>height</code> is set, the aspect ratio is kept.</td></tr>
+<tr><td><code>height</code></td><td>length or %</td><td class="default">natural size</td><td>Display height (a percentage is of the content height).</td></tr>
+<tr><td><code>align</code></td><td><code>left</code> <code>center</code> <code>right</code></td><td class="default">inherited</td><td>Horizontal placement within the available width.</td></tr>
+<tr><td><code>x</code>, <code>y</code></td><td>length or %</td><td class="default">–</td><td>Absolute position of the top-left corner.</td></tr>
+<tr><td colspan="4"><code>margin-top</code>, <code>margin-bottom</code> and the other <a href="#style-attributes">style attributes</a>.</td></tr>
+</table></div>
+<p>The natural size is the pixel size at 72 dpi, or at the DPI recorded in a PNG file.</p>
+
+<pre><code class="lang-xml">&lt;img ref="logo" width="45mm"/&gt;
+&lt;img src="charts/q3.png" width="80%" align="center" margin-bottom="10"/&gt;</code></pre>
+<!-- ======================================================= -->
+<h2 id="table"><code>&lt;table&gt;</code></h2>
+<p>A grid of rows and cells. It breaks across pages between rows, repeating header rows.</p>
+<p><strong>Children:</strong> <code>&lt;row&gt;</code> and <code>&lt;for-each&gt;</code> (generating rows).</p>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>widths</code></td><td>comma-separated list</td><td class="default">equal columns</td><td>Column widths. <code>N*</code> takes a share of the space left after fixed columns (<code>*</code> = <code>1*</code>), a length is fixed, and <code>%</code> is a percentage of the table width. Example: <code>widths="30mm,2*,1*,15%"</code>. Without it, the column count comes from the widest row.</td></tr>
+<tr><td><code>width</code></td><td>length or %</td><td class="default"><code>100%</code></td><td>Table width.</td></tr>
+<tr><td><code>border</code></td><td>length</td><td class="default"><code>0.5</code></td><td>Cell border line width. <code>0</code> means no borders.</td></tr>
+<tr><td><code>border-color</code></td><td>color</td><td class="default"><code>black</code></td><td>Border color.</td></tr>
+<tr><td><code>padding</code></td><td>1–4 lengths</td><td class="default"><code>4</code></td><td>Cell padding (top right bottom left).</td></tr>
+<tr><td><code>header-bg</code></td><td>color</td><td class="default">–</td><td>Background of header rows.</td></tr>
+<tr><td><code>stripe</code></td><td>color</td><td class="default">–</td><td>Background of every second body row.</td></tr>
+<tr><td><code>repeat-header</code></td><td><code>true</code> <code>false</code></td><td class="default"><code>true</code></td><td>Repeat header rows at the top of each continuation page.</td></tr>
+<tr><td><code>x</code>, <code>y</code></td><td>length or %</td><td class="default">–</td><td>Absolute position (the table then doesn't paginate).</td></tr>
+<tr><td colspan="4"><a href="#style-attributes">Style attributes</a>, inherited by all cells.</td></tr>
+</table></div>
+
+<pre><code class="lang-xml">&lt;table widths="4*,1*,1.5*" border="0.5" border-color="#bbb" padding="5 6"
+       header-bg="#1f4e9c" stripe="#f2f5fa" size="10"&gt;
+  &lt;row header="true" color="white"&gt;
+    &lt;cell&gt;Description&lt;/cell&gt;&lt;cell align="right"&gt;Qty&lt;/cell&gt;&lt;cell align="right"&gt;Amount&lt;/cell&gt;
+  &lt;/row&gt;
+  &lt;row&gt;&lt;cell&gt;Consulting&lt;/cell&gt;&lt;cell align="right"&gt;12&lt;/cell&gt;&lt;cell align="right"&gt;$1,800.00&lt;/cell&gt;&lt;/row&gt;
+  &lt;row bold="true"&gt;&lt;cell colspan="2" align="right"&gt;Total&lt;/cell&gt;&lt;cell align="right"&gt;$1,800.00&lt;/cell&gt;&lt;/row&gt;
+&lt;/table&gt;</code></pre>
+<h3 id="row"><code>&lt;row&gt;</code></h3>
+<p><strong>Children:</strong> <code>&lt;cell&gt;</code> and <code>&lt;for-each&gt;</code>. A row with fewer cells than columns is padded with empty cells; a row with more is an error.</p>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>header</code></td><td><code>true</code> <code>false</code></td><td class="default"><code>false</code></td><td>A header row: bold by default, uses <code>header-bg</code>, is kept with the next row, and repeats after page breaks.</td></tr>
+<tr><td><code>height</code></td><td>length</td><td class="default">content</td><td>Minimum row height.</td></tr>
+<tr><td><code>bg</code></td><td>color</td><td class="default">–</td><td>Row background, overriding <code>header-bg</code> and <code>stripe</code>.</td></tr>
+<tr><td colspan="4"><a href="#style-attributes">Style attributes</a>, inherited by the row's cells.</td></tr>
+</table></div>
+
+<h3 id="cell"><code>&lt;cell&gt;</code></h3>
+<p><strong>Children:</strong> inline text, or blocks (<code>&lt;text&gt;</code>, <code>&lt;img&gt;</code>, nested <code>&lt;table&gt;</code>, <code>&lt;spacer&gt;</code>), and <code>&lt;for-each&gt;</code>. Blocks inside cells can't use <code>x</code>/<code>y</code>.</p>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>colspan</code></td><td>number ≥ 1</td><td class="default"><code>1</code></td><td>Number of columns this cell spans.</td></tr>
+<tr><td><code>valign</code></td><td><code>top</code> <code>middle</code> <code>bottom</code></td><td class="default"><code>top</code></td><td>Vertical alignment within the row.</td></tr>
+<tr><td><code>bg</code></td><td>color</td><td class="default">–</td><td>Cell background, overriding the row's.</td></tr>
+<tr><td colspan="4"><a href="#style-attributes">Style attributes</a>, e.g. <code>align="right"</code> for numbers.</td></tr>
+</table></div>
+
+<pre><code class="lang-xml">&lt;cell valign="middle"&gt;
+  &lt;text bold="true"&gt;Globex Ltd.&lt;/text&gt;
+  &lt;text size="8" color="gray"&gt;Customer since 2019&lt;/text&gt;
+&lt;/cell&gt;</code></pre>
+<!-- ======================================================= -->
+<h2 id="spacer"><code>&lt;spacer&gt;</code></h2>
+<p>Vertical empty space. It's dropped if it would land at the top of a continuation page.</p>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>height</code></td><td>length</td><td class="default">required</td><td>Amount of space.</td></tr>
+</table></div>
+
+<pre><code class="lang-xml">&lt;spacer height="10mm"/&gt;</code></pre>
+<!-- ======================================================= -->
+<h2 id="page-break"><code>&lt;page-break&gt;</code></h2>
+<p>Forces the following content onto a new page. It has no attributes. A break on a page that has no content yet does nothing, so it never produces blank pages.</p>
+
+<pre><code class="lang-xml">&lt;text style="h1"&gt;Chapter 1&lt;/text&gt; ...
+&lt;page-break/&gt;
+&lt;text style="h1"&gt;Chapter 2&lt;/text&gt; ...</code></pre>
+<!-- ======================================================= -->
+<h2 id="for-each"><code>&lt;for-each&gt;</code></h2>
+<p>Repeats its content once per element of an array. It can appear anywhere: as a child of <code>&lt;document&gt;</code> (to generate pages), <code>&lt;page&gt;</code>, <code>&lt;table&gt;</code> (rows), <code>&lt;row&gt;</code> (cells), <code>&lt;cell&gt;</code>, <code>&lt;text&gt;</code> (inline content), or another loop. See <a href="guide.html#loops">Loops</a>.</p>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>items</code></td><td>variable path</td><td class="default">required</td><td>The array to iterate: <code>items</code>, <code>${items}</code>, <code>order.lines</code> or <code>${order.lines}</code>. It must be an array, either from the JSON data or a Go slice.</td></tr>
+<tr><td><code>var</code></td><td>name</td><td class="default"><code>item</code></td><td>Variable holding the current element: <code>${item}</code> or <code>${item.field}</code>.</td></tr>
+<tr><td><code>index</code></td><td>name</td><td class="default">–</td><td>Variable holding the 0-based position.</td></tr>
+<tr><td><code>number</code></td><td>name</td><td class="default">–</td><td>Variable holding the 1-based position.</td></tr>
+</table></div>
+
+<pre><code class="lang-xml">&lt;for-each items="${items}" var="item" number="n"&gt;
+  &lt;row&gt;&lt;cell&gt;${n}&lt;/cell&gt;&lt;cell&gt;${item.name}&lt;/cell&gt;&lt;cell align="right"&gt;${item.price}&lt;/cell&gt;&lt;/row&gt;
+&lt;/for-each&gt;</code></pre>
+<!-- ======================================================= -->
+<h2 id="style-attributes">Style attributes</h2>
+<p>These styling attributes are accepted on <code>&lt;document&gt;</code>, <code>&lt;page&gt;</code>, <code>&lt;header&gt;</code>, <code>&lt;footer&gt;</code>, <code>&lt;watermark&gt;</code>, all blocks, table rows and cells, inline tags, and <code>&lt;style&gt;</code> resources. See <a href="guide.html#styles">Styles</a> for how they cascade.</p>
+<div class="table-wrap"><table>
+<tr><th>Attribute</th><th>Values</th><th>Inherited</th><th>Description</th></tr>
+<tr><td><code>style</code></td><td>style ids</td><td class="default">–</td><td>Named styles to apply, space-separated, left to right. The element's own attributes win.</td></tr>
+<tr><td><code>font</code></td><td><code>helvetica</code> <code>times</code> <code>courier</code> <code>zapfdingbats</code></td><td class="default">yes</td><td>Font family. Aliases: <code>arial</code>/<code>sans</code>/<code>sans-serif</code>, <code>serif</code>/<code>times-roman</code>/<code>times new roman</code>, <code>monospace</code>/<code>courier new</code>. See <a href="guide.html#fonts">Fonts</a>.</td></tr>
+<tr><td><code>size</code></td><td>length</td><td class="default">yes</td><td>Font size. <code>font-size</code> is an alias.</td></tr>
+<tr><td><code>bold</code></td><td><code>true</code> <code>false</code></td><td class="default">yes</td><td>Bold weight.</td></tr>
+<tr><td><code>italic</code></td><td><code>true</code> <code>false</code></td><td class="default">yes</td><td>Italic style.</td></tr>
+<tr><td><code>underline</code></td><td><code>true</code> <code>false</code></td><td class="default">yes</td><td>Underline.</td></tr>
+<tr><td><code>color</code></td><td><a href="guide.html#colors">color</a></td><td class="default">yes</td><td>Text color.</td></tr>
+<tr><td><code>align</code></td><td><code>left</code> <code>center</code> <code>right</code> <code>justify</code></td><td class="default">yes</td><td>Horizontal alignment of text and images.</td></tr>
+<tr><td><code>line-height</code></td><td>number</td><td class="default">yes</td><td>Line height as a multiple of the font size (default <code>1.2</code>).</td></tr>
+<tr><td><code>margin-top</code></td><td>length</td><td class="default">no</td><td>Space above a block.</td></tr>
+<tr><td><code>margin-bottom</code></td><td>length</td><td class="default">no</td><td>Space below a block.</td></tr>
+<tr><td><code>bg</code></td><td><a href="guide.html#colors">color</a></td><td class="default">no</td><td>Background color (table rows and cells).</td></tr>
+</table></div>
+<p>Booleans accept <code>true</code>/<code>false</code>, <code>yes</code>/<code>no</code> and <code>1</code>/<code>0</code>.</p>
+
+<nav class="pager"><a class="prev" href="guide.html"><small>Previous</small>Guide</a><a class="next" href="examples.html"><small>Next</small>Examples</a></nav>
+<footer class="site">xml2pdf is open source. <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf">Source on GitHub</a> · <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf/issues">Report an issue</a></footer>
+</main>
+</div>
+</body>
+</html>

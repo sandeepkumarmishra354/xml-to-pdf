@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Go library · xml2pdf</title>
+<meta name="description" content="xml2pdf: generate PDFs from declarative XML. Documentation for the XML tags, attributes, command line tool and Go library.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e9c'/%3E%3Ctext x='16' y='21' font-size='13' text-anchor='middle' fill='white' font-family='monospace'%3E%3C/%3E%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="Toggle navigation"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="logo">&lt;/&gt;</span>xml2pdf</a>
+  <span class="spacer"></span>
+  <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
+  <a class="gh" href="https://github.com/sandeepkumarmishra354/xml-to-pdf"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg><span class="txt">Source</span></a>
+</header>
+<div class="layout">
+<nav class="sidebar" aria-label="Documentation">
+<h4>Getting started</h4>
+<ul>
+<li><a href="index.html">Overview</a>
+</li>
+<li><a href="cli.html">Command line</a>
+</li>
+<li><a href="library.html">Go library</a>
+</li>
+</ul>
+<h4>Writing documents</h4>
+<ul>
+<li><a href="guide.html">Guide</a>
+<ul>
+<li><a href="guide.html#structure">Document structure</a></li>
+<li><a href="guide.html#units">Units</a></li>
+<li><a href="guide.html#pages">Page setup</a></li>
+<li><a href="guide.html#layout">Layout &amp; pagination</a></li>
+<li><a href="guide.html#text">Text &amp; fonts</a></li>
+<li><a href="guide.html#styles">Styles</a></li>
+<li><a href="guide.html#colors">Colors</a></li>
+<li><a href="guide.html#variables">Variables</a></li>
+<li><a href="guide.html#loops">Loops</a></li>
+<li><a href="guide.html#bands">Headers &amp; footers</a></li>
+<li><a href="guide.html#watermarks">Watermarks</a></li>
+<li><a href="guide.html#page-selectors">Page selectors</a></li>
+<li><a href="guide.html#errors">Errors</a></li>
+<li><a href="guide.html#limitations">Limitations</a></li>
+</ul>
+</li>
+<li><a href="reference.html">Element reference</a>
+<ul>
+<li><a href="reference.html#document">&lt;document&gt;</a></li>
+<li><a href="reference.html#constants">&lt;constants&gt;</a></li>
+<li><a href="reference.html#resources">&lt;resources&gt;</a></li>
+<li><a href="reference.html#page">&lt;page&gt;</a></li>
+<li><a href="reference.html#header-footer">&lt;header&gt; / &lt;footer&gt;</a></li>
+<li><a href="reference.html#watermark">&lt;watermark&gt;</a></li>
+<li><a href="reference.html#text">&lt;text&gt;</a></li>
+<li><a href="reference.html#inline">Inline tags</a></li>
+<li><a href="reference.html#img">&lt;img&gt;</a></li>
+<li><a href="reference.html#table">&lt;table&gt;</a></li>
+<li><a href="reference.html#row">&lt;row&gt;</a></li>
+<li><a href="reference.html#cell">&lt;cell&gt;</a></li>
+<li><a href="reference.html#spacer">&lt;spacer&gt;</a></li>
+<li><a href="reference.html#page-break">&lt;page-break&gt;</a></li>
+<li><a href="reference.html#for-each">&lt;for-each&gt;</a></li>
+<li><a href="reference.html#style-attributes">Style attributes</a></li>
+</ul>
+</li>
+</ul>
+<h4>More</h4>
+<ul>
+<li><a href="examples.html">Examples</a>
+</li>
+</ul>
+</nav>
+<main>
+<h1>Go library</h1>
+<p class="lead">Everything the CLI does is available as a Go package, so you can render PDFs inside your own services and tools.</p>
+
+<pre><code class="lang-sh">go get github.com/sandeepkumarmishra354/xml-to-pdf</code></pre>
+<pre><code class="lang-go">import "github.com/sandeepkumarmishra354/xml-to-pdf/pkg/xml2pdf"</code></pre>
+<h2 id="api">API</h2>
+
+<h3 id="render"><code>Render</code></h3>
+
+<pre><code class="lang-go">func Render(r io.Reader, w io.Writer, opts Options) error</code></pre>
+<p>Reads an XML document from <code>r</code> and writes the PDF to <code>w</code>. The whole document is laid out before anything is written, so if <code>Render</code> returns an error, nothing has been written to <code>w</code>.</p>
+
+<h3 id="render-file"><code>RenderFile</code></h3>
+
+<pre><code class="lang-go">func RenderFile(in, out string, opts Options) error</code></pre>
+<p>Renders the XML file <code>in</code> to the PDF file <code>out</code>. If <code>opts.BaseDir</code> is empty, it defaults to the directory of <code>in</code>. The output file is only created if rendering succeeds. Errors are prefixed with the input path.</p>
+
+<h3 id="load-data"><code>LoadData</code></h3>
+
+<pre><code class="lang-go">func LoadData(path string) (map[string]any, error)</code></pre>
+<p>Reads a JSON object for use as <code>Options.Data</code>. Numbers keep their original text (<code>12.50</code> stays <code>12.50</code>, not <code>12.5</code>).</p>
+
+<h3 id="options"><code>Options</code></h3>
+
+<pre><code class="lang-go">type Options struct {
+	// BaseDir resolves relative image paths. RenderFile defaults it to the
+	// directory of the input file; Render defaults it to the working directory.
+	BaseDir string
+	// Data provides values for ${name} lookups and arrays for &lt;for-each&gt;.
+	// Nested values are addressed as ${a.b} and ${list.0.c}.
+	Data map[string]any
+	// Vars override Data and document constants.
+	Vars map[string]string
+	// CreationDate is written to the PDF metadata; zero means now.
+	CreationDate time.Time
+}</code></pre>
+<p><code>Data</code> can hold decoded JSON (<code>map[string]any</code>, <code>[]any</code>) as well as ordinary Go maps with string keys and slices, such as <code>[]map[string]any</code> or <code>map[string]string</code>. Scalars can be strings, booleans, any integer or float type, <code>json.Number</code>, or anything implementing <code>fmt.Stringer</code>. Struct fields aren't read; convert structs to maps, or marshal them to JSON and use <code>LoadData</code>.</p>
+
+<h2 id="examples">Examples</h2>
+
+<h3 id="example-file">Render a file</h3>
+
+<pre><code class="lang-go">data, err := xml2pdf.LoadData("invoice.json")
+if err != nil {
+	log.Fatal(err)
+}
+err = xml2pdf.RenderFile("invoice.xml", "invoice.pdf", xml2pdf.Options{
+	Data: data,
+	Vars: map[string]string{"status": "PAID"},
+})
+if err != nil {
+	log.Fatal(err) // e.g. "invoice.xml: line 41: undefined variable \"customer.nmae\""
+}</code></pre>
+<h3 id="example-http">Serve PDFs over HTTP</h3>
+
+<pre><code class="lang-go">//go:embed templates/invoice.xml
+var invoiceTemplate []byte
+
+func invoiceHandler(w http.ResponseWriter, r *http.Request) {
+	inv, err := loadInvoice(r.URL.Query().Get("id")) // your code
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	var buf bytes.Buffer
+	err = xml2pdf.Render(bytes.NewReader(invoiceTemplate), &amp;buf, xml2pdf.Options{
+		BaseDir: "templates",
+		Data: map[string]any{
+			"invoice_no": inv.Number,
+			"customer":   map[string]any{"name": inv.Customer.Name, "address": inv.Customer.Address},
+			"items":      inv.LineItems, // e.g. []map[string]any
+			"total":      inv.Total,
+		},
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/pdf")
+	w.Write(buf.Bytes())
+}</code></pre>
+<p>Rendering into a buffer first means you can still return a proper error status if the template fails.</p>
+
+<h3 id="example-deterministic">Reproducible output</h3>
+<p>PDFs record their creation time. Fix it to get byte-identical output for the same input, which is useful for tests and caching:</p>
+
+<pre><code class="lang-go">opts := xml2pdf.Options{CreationDate: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)}</code></pre>
+<h2 id="concurrency">Concurrency</h2>
+<p>Each call to <code>Render</code> or <code>RenderFile</code> is independent and shares no mutable state, so you can call them from many goroutines at once.</p>
+
+<h2 id="packages">Package layout</h2>
+<p>Only <code>pkg/xml2pdf</code> is a public API. Everything under <code>internal/</code> may change without notice.</p>
+<div class="table-wrap"><table>
+<tr><th>Package</th><th>Role</th></tr>
+<tr><td><code>cmd/xml2pdf</code></td><td>The command-line tool.</td></tr>
+<tr><td><code>pkg/xml2pdf</code></td><td>The public Go API.</td></tr>
+<tr><td><code>internal/parser</code></td><td>XML → node tree, keeping mixed content and line numbers.</td></tr>
+<tr><td><code>internal/vars</code></td><td><code>${...}</code> resolution and <code>&lt;for-each&gt;</code> expansion.</td></tr>
+<tr><td><code>internal/model</code></td><td>Typed document model and validation.</td></tr>
+<tr><td><code>internal/style</code></td><td>Colors, fonts, named styles and the cascade.</td></tr>
+<tr><td><code>internal/units</code></td><td>Length parsing.</td></tr>
+<tr><td><code>internal/layout</code></td><td>Text wrapping, tables and pagination → drawing operations.</td></tr>
+<tr><td><code>internal/render</code></td><td>Drawing operations → PDF, via <a href="https://github.com/go-pdf/fpdf">go-pdf/fpdf</a>.</td></tr>
+</table></div>
+
+<nav class="pager"><a class="prev" href="cli.html"><small>Previous</small>Command line</a><a class="next" href="guide.html"><small>Next</small>Guide</a></nav>
+<footer class="site">xml2pdf is open source. <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf">Source on GitHub</a> · <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf/issues">Report an issue</a></footer>
+</main>
+</div>
+</body>
+</html>

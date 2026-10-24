@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide · xml2pdf</title>
+<meta name="description" content="xml2pdf: generate PDFs from declarative XML. Documentation for the XML tags, attributes, command line tool and Go library.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e9c'/%3E%3Ctext x='16' y='21' font-size='13' text-anchor='middle' fill='white' font-family='monospace'%3E%3C/%3E%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="Toggle navigation"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="logo">&lt;/&gt;</span>xml2pdf</a>
+  <span class="spacer"></span>
+  <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
+  <a class="gh" href="https://github.com/sandeepkumarmishra354/xml-to-pdf"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg><span class="txt">Source</span></a>
+</header>
+<div class="layout">
+<nav class="sidebar" aria-label="Documentation">
+<h4>Getting started</h4>
+<ul>
+<li><a href="index.html">Overview</a>
+</li>
+<li><a href="cli.html">Command line</a>
+</li>
+<li><a href="library.html">Go library</a>
+</li>
+</ul>
+<h4>Writing documents</h4>
+<ul>
+<li><a href="guide.html">Guide</a>
+<ul>
+<li><a href="guide.html#structure">Document structure</a></li>
+<li><a href="guide.html#units">Units</a></li>
+<li><a href="guide.html#pages">Page setup</a></li>
+<li><a href="guide.html#layout">Layout &amp; pagination</a></li>
+<li><a href="guide.html#text">Text &amp; fonts</a></li>
+<li><a href="guide.html#styles">Styles</a></li>
+<li><a href="guide.html#colors">Colors</a></li>
+<li><a href="guide.html#variables">Variables</a></li>
+<li><a href="guide.html#loops">Loops</a></li>
+<li><a href="guide.html#bands">Headers &amp; footers</a></li>
+<li><a href="guide.html#watermarks">Watermarks</a></li>
+<li><a href="guide.html#page-selectors">Page selectors</a></li>
+<li><a href="guide.html#errors">Errors</a></li>
+<li><a href="guide.html#limitations">Limitations</a></li>
+</ul>
+</li>
+<li><a href="reference.html">Element reference</a>
+<ul>
+<li><a href="reference.html#document">&lt;document&gt;</a></li>
+<li><a href="reference.html#constants">&lt;constants&gt;</a></li>
+<li><a href="reference.html#resources">&lt;resources&gt;</a></li>
+<li><a href="reference.html#page">&lt;page&gt;</a></li>
+<li><a href="reference.html#header-footer">&lt;header&gt; / &lt;footer&gt;</a></li>
+<li><a href="reference.html#watermark">&lt;watermark&gt;</a></li>
+<li><a href="reference.html#text">&lt;text&gt;</a></li>
+<li><a href="reference.html#inline">Inline tags</a></li>
+<li><a href="reference.html#img">&lt;img&gt;</a></li>
+<li><a href="reference.html#table">&lt;table&gt;</a></li>
+<li><a href="reference.html#row">&lt;row&gt;</a></li>
+<li><a href="reference.html#cell">&lt;cell&gt;</a></li>
+<li><a href="reference.html#spacer">&lt;spacer&gt;</a></li>
+<li><a href="reference.html#page-break">&lt;page-break&gt;</a></li>
+<li><a href="reference.html#for-each">&lt;for-each&gt;</a></li>
+<li><a href="reference.html#style-attributes">Style attributes</a></li>
+</ul>
+</li>
+</ul>
+<h4>More</h4>
+<ul>
+<li><a href="examples.html">Examples</a>
+</li>
+</ul>
+</nav>
+<main>
+<h1>Guide</h1>
+<p class="lead">How xml2pdf documents are put together: page setup, how content flows and breaks across pages, styling, and templating with variables and loops.</p>
+
+<h2 id="structure">Document structure</h2>
+<p>A document is a <code>&lt;document&gt;</code> root containing, in any order:</p>
+
+<pre><code class="lang-xml">&lt;document title="My report" page-size="A4" margin="20mm" font="helvetica" size="11"&gt;
+  &lt;constants&gt;...&lt;/constants&gt;     &lt;!-- named values usable as ${name} --&gt;
+  &lt;resources&gt;...&lt;/resources&gt;     &lt;!-- images and named styles --&gt;
+  &lt;watermark .../&gt;               &lt;!-- zero or more --&gt;
+  &lt;header&gt;...&lt;/header&gt;           &lt;!-- optional, repeated on pages --&gt;
+  &lt;footer&gt;...&lt;/footer&gt;           &lt;!-- optional, repeated on pages --&gt;
+  &lt;page&gt;...&lt;/page&gt;               &lt;!-- one or more --&gt;
+&lt;/document&gt;</code></pre>
+<p>Rendering happens in stages:</p>
+<ol>
+  <li><strong>Parse.</strong> The XML is read and every element keeps its line number for error messages.</li>
+  <li><strong>Expand.</strong> <code>${variables}</code> are substituted and <code>&lt;for-each&gt;</code> loops are unrolled.</li>
+  <li><strong>Validate.</strong> Elements and attributes are checked; unknown names, bad values and missing styles or images are errors.</li>
+  <li><strong>Lay out.</strong> Text is wrapped, tables are sized and content is split into pages.</li>
+  <li><strong>Render.</strong> Headers, footers and watermarks are added and the PDF is written.</li>
+</ol>
+<p>Because variables are expanded first, you can use <code>${...}</code> in <em>any</em> attribute or text. That includes colors, sizes and file names.</p>
+
+<h2 id="units">Units</h2>
+<p>A bare number is in <strong>points</strong> (1/72 inch). Lengths may also have a unit suffix:</p>
+<div class="table-wrap"><table>
+<tr><th>Unit</th><th>Example</th><th>Equals</th></tr>
+<tr><td><code>pt</code> (default)</td><td><code>12</code>, <code>12pt</code></td><td>1/72 inch</td></tr>
+<tr><td><code>mm</code></td><td><code>20mm</code></td><td>2.835 pt</td></tr>
+<tr><td><code>cm</code></td><td><code>2.5cm</code></td><td>28.35 pt</td></tr>
+<tr><td><code>in</code></td><td><code>0.75in</code></td><td>72 pt</td></tr>
+<tr><td><code>%</code></td><td><code>50%</code></td><td>depends on the attribute (see below)</td></tr>
+</table></div>
+<p>Percentages are allowed on <code>width</code> (a percentage of the available width), <code>height</code> of images (of the content height), <code>x</code> (of the page width), <code>y</code> (of the page height), and table column widths (of the table width). Margins, padding, font sizes, border widths and spacer heights must be absolute.</p>
+
+<h2 id="pages">Page setup</h2>
+<p>The page size, orientation and margins are set on <code>&lt;document&gt;</code>, and any <code>&lt;page&gt;</code> can override them.</p>
+<div class="table-wrap"><table>
+<tr><th><code>page-size</code></th><th>Portrait size</th></tr>
+<tr><td><code>A3</code></td><td>297 × 420 mm</td></tr>
+<tr><td><code>A4</code> (default)</td><td>210 × 297 mm</td></tr>
+<tr><td><code>A5</code></td><td>148 × 210 mm</td></tr>
+<tr><td><code>Letter</code></td><td>8.5 × 11 in</td></tr>
+<tr><td><code>Legal</code></td><td>8.5 × 14 in</td></tr>
+<tr><td><code>Tabloid</code></td><td>11 × 17 in</td></tr>
+<tr><td><code>WIDTHxHEIGHT</code></td><td>custom, e.g. <code>100mmx150mm</code> or <code>400x600</code></td></tr>
+</table></div>
+<p><code>orientation="landscape"</code> swaps the width and height. <code>margin</code> takes 1–4 values in CSS order: <code>"20mm"</code> (all sides), <code>"20mm 15mm"</code> (vertical, horizontal), <code>"10 15 20"</code> (top, horizontal, bottom) or <code>"10 15 20 25"</code> (top, right, bottom, left). The default margin is <code>0.5in</code>.</p>
+
+<pre><code class="lang-xml">&lt;document page-size="Letter" margin="0.75in"&gt;
+  &lt;page&gt;...&lt;/page&gt;                                   &lt;!-- Letter, portrait --&gt;
+  &lt;page orientation="landscape" margin="0.5in"&gt;...&lt;/page&gt;  &lt;!-- Letter, landscape --&gt;
+  &lt;page page-size="A5"&gt;...&lt;/page&gt;                    &lt;!-- A5, portrait --&gt;
+&lt;/document&gt;</code></pre>
+<h2 id="layout">Layout &amp; pagination</h2>
+<h3 id="flow">Flow</h3>
+<p>The blocks inside a page (<code>&lt;text&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;table&gt;</code>, <code>&lt;spacer&gt;</code>) are stacked from top to bottom inside the page's content area: the page minus its margins, minus any header or footer. When the next piece doesn't fit, a new page starts with the same size, margins and settings. Each <code>&lt;page&gt;</code> element always starts a new physical page.</p>
+<ul>
+  <li><strong>Paragraphs</strong> break between lines.</li>
+  <li><strong>Tables</strong> break between rows. Rows themselves are never split. Header rows (<code>header="true"</code>) are kept with the first body row, and they repeat at the top of each continuation page unless <code>repeat-header="false"</code>.</li>
+  <li><strong>Images</strong> are never split. An image larger than the content area is scaled down to fit.</li>
+  <li><strong>Vertical space</strong> (<code>margin-top</code>, <code>margin-bottom</code>, <code>&lt;spacer&gt;</code>) is dropped when it would land at the very top of a continuation page.</li>
+  <li><strong><code>&lt;page-break/&gt;</code></strong> starts a new page. Consecutive breaks never produce blank pages.</li>
+</ul>
+
+<h3 id="absolute">Absolute positioning</h3>
+<p>Give a <code>&lt;text&gt;</code>, <code>&lt;img&gt;</code> or <code>&lt;table&gt;</code> an <code>x</code> and/or <code>y</code> to place it at exact coordinates instead of in the flow. Coordinates are measured from the <strong>top-left corner of the page</strong> (not the margin). A missing <code>x</code> defaults to the left margin, and a missing <code>y</code> to the top of the content area. Absolute blocks are drawn on the page the flow has reached at that point, and they don't take up space in the flow.</p>
+
+<pre><code class="lang-xml">&lt;text x="120mm" y="20mm" width="70mm" align="right" size="22" bold="true"&gt;INVOICE&lt;/text&gt;
+&lt;img ref="stamp" x="75%" y="80%" width="30mm"/&gt;</code></pre>
+<p>For absolute text and tables, <code>width</code> sets the box width. It defaults to the space from <code>x</code> to the right margin.</p>
+
+<h2 id="text">Text &amp; fonts</h2>
+<p>Whitespace in text is collapsed the way HTML does it, so you can indent and wrap your XML freely. Use <code>&lt;br/&gt;</code> for a hard line break. A word too long for a line is broken at character boundaries.</p>
+
+<pre><code class="lang-xml">&lt;text align="justify"&gt;
+  Normal, &lt;b&gt;bold&lt;/b&gt;, &lt;i&gt;italic&lt;/i&gt;, &lt;u&gt;underlined&lt;/u&gt;,
+  &lt;span color="#c00" size="14"&gt;red and larger&lt;/span&gt;,&lt;br/&gt;
+  and a new line.
+&lt;/text&gt;</code></pre>
+<p>Loose text written directly in a <code>&lt;page&gt;</code>, <code>&lt;cell&gt;</code>, <code>&lt;header&gt;</code> or <code>&lt;footer&gt;</code> becomes an implicit paragraph.</p>
+
+<h3 id="fonts">Fonts</h3>
+<p>xml2pdf uses the standard PDF fonts, which every PDF viewer has built in, so nothing needs embedding:</p>
+<div class="table-wrap"><table>
+<tr><th><code>font</code> value</th><th>Font</th></tr>
+<tr><td><code>helvetica</code>, <code>arial</code>, <code>sans</code>, <code>sans-serif</code></td><td>Helvetica (default)</td></tr>
+<tr><td><code>times</code>, <code>times-roman</code>, <code>times new roman</code>, <code>serif</code></td><td>Times</td></tr>
+<tr><td><code>courier</code>, <code>courier new</code>, <code>monospace</code></td><td>Courier</td></tr>
+<tr><td><code>zapfdingbats</code></td><td>ZapfDingbats</td></tr>
+</table></div>
+<p>Helvetica, Times and Courier each come in regular, <code>bold</code>, <code>italic</code> and bold-italic variants. ZapfDingbats (a set of symbols and dingbats) has a single variant.</p>
+<div class="warn"><p><strong>Character set.</strong> The standard fonts cover Windows-1252: Latin-1 (é, ü, ñ, ß, …) plus €, “curly quotes”, ‘apostrophes’, – and — dashes, • and ™. Characters outside it, such as CJK, Cyrillic or emoji, can't be shown yet. Custom TrueType fonts with full Unicode are planned.</p></div>
+
+<h2 id="styles">Styles</h2>
+<p>Text styling is set with <a href="reference.html#style-attributes">style attributes</a>, which work on almost every element. They <strong>cascade</strong>: document → page → block → table row → cell → inline span. Each level inherits from its parent and overrides what it sets itself.</p>
+
+<pre><code class="lang-xml">&lt;document font="times" size="11" color="#222"&gt;     &lt;!-- base for everything --&gt;
+  &lt;page align="justify"&gt;                            &lt;!-- all text on this page --&gt;
+    &lt;text size="14"&gt;Inherits times and #222 but is 14pt and justified&lt;/text&gt;
+  &lt;/page&gt;
+&lt;/document&gt;</code></pre>
+<p>Font, size, bold, italic, underline, color, alignment and line-height are inherited. <code>margin-top</code>, <code>margin-bottom</code> and <code>bg</code> apply only to the element they're set on.</p>
+
+<h3 id="named-styles">Named styles</h3>
+<p>Declare reusable styles in <code>&lt;resources&gt;</code> and apply them with <code>style="..."</code>. A style can <code>extends</code> another one. An element can use several styles separated by spaces, applied left to right, and attributes on the element itself always win.</p>
+
+<pre><code class="lang-xml">&lt;resources&gt;
+  &lt;style id="sans" font="helvetica"/&gt;
+  &lt;style id="h1" extends="sans" size="20" bold="true" color="#1f4e9c" margin-bottom="8"/&gt;
+  &lt;style id="muted" color="#777" size="9"/&gt;
+&lt;/resources&gt;
+...
+&lt;text style="h1"&gt;Title&lt;/text&gt;
+&lt;text style="h1 muted" size="12"&gt;A muted heading at 12pt&lt;/text&gt;</code></pre>
+<h2 id="colors">Colors</h2>
+<p>Colors accept <code>#rgb</code>, <code>#rrggbb</code>, <code>rgb(r, g, b)</code> (0–255), or a name: <code>black</code>, <code>white</code>, <code>red</code>, <code>green</code>, <code>blue</code>, <code>yellow</code>, <code>orange</code>, <code>purple</code>, <code>gray</code>/<code>grey</code>, <code>lightgray</code>, <code>darkgray</code>, <code>navy</code>, <code>teal</code>, <code>maroon</code>.</p>
+
+<h2 id="variables">Variables</h2>
+<p>Write <code>${name}</code> anywhere in text or attribute values. Names are looked up in this order, and the first match wins:</p>
+<ol>
+  <li>loop variables of the enclosing <a href="#loops"><code>&lt;for-each&gt;</code></a> loops (innermost first)</li>
+  <li><code>--set name=value</code> on the command line (<code>Options.Vars</code> in Go)</li>
+  <li>the JSON data file given with <code>--data</code> (<code>Options.Data</code> in Go)</li>
+  <li><code>&lt;const&gt;</code> definitions in the document</li>
+</ol>
+
+<pre><code class="lang-xml">&lt;constants&gt;
+  &lt;const name="company" value="Acme Corp"/&gt;
+  &lt;const name="brand" value="#1f4e9c"/&gt;
+  &lt;const name="copyright"&gt;© ${year} ${company}&lt;/const&gt;  &lt;!-- may reference other variables --&gt;
+&lt;/constants&gt;
+&lt;text color="${brand}"&gt;${copyright}&lt;/text&gt;</code></pre>
+<p>Dotted names reach into JSON objects and arrays: given <code>{"customer": {"name": "Globex"}, "items": [{"price": "9.99"}]}</code>, <code>${customer.name}</code> is <code>Globex</code> and <code>${items.0.price}</code> is <code>9.99</code>. Numbers keep their original formatting (<code>12.50</code> stays <code>12.50</code>), <code>true</code>/<code>false</code> print as-is, and <code>null</code> prints as an empty string.</p>
+<p>Write <code>$${</code> to output a literal <code>${</code>. An undefined variable is an error that names the variable and its line. A circular constant definition is also an error.</p>
+
+<h2 id="loops">Loops</h2>
+<p><code>&lt;for-each&gt;</code> repeats its content once for each element of an array. It works anywhere: around table rows, blocks, inline text, or whole pages.</p>
+
+<pre><code class="lang-xml">&lt;table widths="0.5in,4*,1*"&gt;
+  &lt;row header="true"&gt;&lt;cell&gt;#&lt;/cell&gt;&lt;cell&gt;Item&lt;/cell&gt;&lt;cell align="right"&gt;Price&lt;/cell&gt;&lt;/row&gt;
+  &lt;for-each items="${items}" var="item" number="n"&gt;
+    &lt;row&gt;
+      &lt;cell&gt;${n}&lt;/cell&gt;
+      &lt;cell&gt;${item.name}&lt;/cell&gt;
+      &lt;cell align="right"&gt;${item.price}&lt;/cell&gt;
+    &lt;/row&gt;
+  &lt;/for-each&gt;
+&lt;/table&gt;</code></pre>
+<p><code>var</code> names the current element (default <code>item</code>). <code>index</code> and <code>number</code> optionally name its 0-based and 1-based position. An empty array produces nothing. Loops nest, and an inner loop can iterate over a field of the outer element:</p>
+
+<pre><code class="lang-xml">&lt;for-each items="orders" var="order"&gt;
+  &lt;text style="h2"&gt;Order ${order.id}&lt;/text&gt;
+  &lt;for-each items="order.lines" var="line"&gt;
+    &lt;text&gt;${line.qty} × ${line.sku}&lt;/text&gt;
+  &lt;/for-each&gt;
+&lt;/for-each&gt;</code></pre>
+<p>Wrapping <code>&lt;page&gt;</code> in a loop produces one page per record, which is handy for letters, certificates or labels:</p>
+
+<pre><code class="lang-xml">&lt;for-each items="recipients" var="r"&gt;
+  &lt;page&gt;&lt;text&gt;Dear ${r.name}, ...&lt;/text&gt;&lt;/page&gt;
+&lt;/for-each&gt;</code></pre>
+<h2 id="bands">Headers &amp; footers</h2>
+<p><code>&lt;header&gt;</code> and <code>&lt;footer&gt;</code> hold content that repeats on every page (or on <a href="#page-selectors">selected pages</a>). In their text, <code>{page}</code> becomes the current page number and <code>{pages}</code> the total page count. These tokens use single braces and no <code>$</code>.</p>
+
+<pre><code class="lang-xml">&lt;header pages="2-"&gt;&lt;text align="right" size="9"&gt;Annual report 2026&lt;/text&gt;&lt;/header&gt;
+&lt;footer&gt;&lt;text align="center" size="9"&gt;Page {page} of {pages}&lt;/text&gt;&lt;/footer&gt;</code></pre>
+<p>The header sits at the top margin and the footer at the bottom margin, and the body's content area shrinks to make room for them. Their height is measured from their content unless you set <code>height</code>. <code>gap</code> (default 6pt) is the space between the band and the body. Use <code>header="false"</code> or <code>footer="false"</code> on a <code>&lt;page&gt;</code> to hide them there, for example on a cover page; the space is then given back to the content.</p>
+
+<h2 id="watermarks">Watermarks</h2>
+<p>A <code>&lt;watermark&gt;</code> draws text or an image centered on each page (or at <code>x</code>/<code>y</code>), rotated and semi-transparent. You can add as many as you like.</p>
+
+<pre><code class="lang-xml">&lt;watermark text="DRAFT" size="100" color="red" opacity="0.12" rotate="45"/&gt;
+&lt;watermark image="logo" width="60%" opacity="0.06" layer="back" pages="2-"/&gt;
+&lt;watermark text="CONFIDENTIAL" size="12" rotate="0" opacity="0.6" y="15pt"/&gt;</code></pre>
+<p>By default watermarks are drawn <strong>in front</strong> of the content, which keeps them visible over table backgrounds. Use <code>layer="back"</code> to draw them beneath the content instead. To hide watermarks on a particular page, set <code>watermark="false"</code> on that <code>&lt;page&gt;</code>.</p>
+
+<h2 id="page-selectors">Page selectors</h2>
+<p>The <code>pages</code> attribute on <code>&lt;header&gt;</code>, <code>&lt;footer&gt;</code> and <code>&lt;watermark&gt;</code> chooses where they appear. It's a comma-separated list of:</p>
+<div class="table-wrap"><table>
+<tr><th>Selector</th><th>Pages</th></tr>
+<tr><td><code>all</code> (default)</td><td>every page</td></tr>
+<tr><td><code>first</code>, <code>last</code></td><td>the first or last page</td></tr>
+<tr><td><code>odd</code>, <code>even</code></td><td>odd or even page numbers</td></tr>
+<tr><td><code>3</code></td><td>page 3</td></tr>
+<tr><td><code>2-5</code></td><td>pages 2 to 5</td></tr>
+<tr><td><code>2-</code></td><td>page 2 onwards</td></tr>
+</table></div>
+<p>Page numbers count physical pages in the output, including overflow pages. For example, <code>pages="first,last"</code> selects the first and last pages.</p>
+
+<h2 id="errors">Errors</h2>
+<p>xml2pdf is strict, so typos surface immediately instead of silently producing a wrong PDF. Errors name the element and its line number:</p>
+
+<pre><code class="lang-text">xml2pdf: invoice.xml: line 12: &lt;text&gt;: unknown attribute "colr"
+xml2pdf: invoice.xml: line 30: unknown style "heading"
+xml2pdf: invoice.xml: line 41: undefined variable "customer.nmae"
+xml2pdf: invoice.xml: line 7: &lt;image&gt;: image not found: images/logo.png
+xml2pdf: invoice.xml: line 55: row spans 5 columns but table has 4</code></pre>
+<p>When there's an error, no output file is written.</p>
+
+<h2 id="limitations">Limitations</h2>
+<ul>
+  <li>Text is limited to the Windows-1252 character set (see <a href="#fonts">Fonts</a>); custom TrueType fonts are planned.</li>
+  <li>There are no conditionals (<code>&lt;if&gt;</code>) yet.</li>
+  <li>There are no lines or shapes, bullet lists, hyperlinks or bookmarks yet.</li>
+  <li>A table row taller than a page is not split; it overflows the page.</li>
+  <li>Cells can't span rows (no <code>rowspan</code>).</li>
+</ul>
+
+<nav class="pager"><a class="prev" href="library.html"><small>Previous</small>Go library</a><a class="next" href="reference.html"><small>Next</small>Element reference</a></nav>
+<footer class="site">xml2pdf is open source. <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf">Source on GitHub</a> · <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf/issues">Report an issue</a></footer>
+</main>
+</div>
+</body>
+</html>

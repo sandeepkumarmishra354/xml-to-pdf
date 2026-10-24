@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document title="Hello" page-size="A5" margin="15mm">
+  <constants>
+    <const name="name" value="World"/>
+  </constants>
+
+  <resources>
+    <style id="title" size="24" bold="true" color="#1f4e9c" margin-bottom="8"/>
+  </resources>
+
+  <footer><text align="center" size="8" color="gray">Page {page} of {pages}</text></footer>
+
+  <page>
+    <text style="title">Hello, ${name}!</text>
+    <text margin-bottom="10">This PDF was generated from XML. Text wraps automatically,
+      and you can mix <b>bold</b>, <i>italic</i> and <span color="red">colored</span> runs.</text>
+    <table widths="2*,1*" header-bg="#eef2f9">
+      <row header="true"><cell>Feature</cell><cell>Status</cell></row>
+      <row><cell>Text, images, tables</cell><cell>Ready</cell></row>
+      <row><cell>Watermarks, headers, footers</cell><cell>Ready</cell></row>
+    </table>
+  </page>
+</document>

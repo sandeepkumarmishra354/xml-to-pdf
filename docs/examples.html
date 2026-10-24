@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Examples · xml2pdf</title>
+<meta name="description" content="xml2pdf: generate PDFs from declarative XML. Documentation for the XML tags, attributes, command line tool and Go library.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e9c'/%3E%3Ctext x='16' y='21' font-size='13' text-anchor='middle' fill='white' font-family='monospace'%3E%3C/%3E%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="Toggle navigation"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="logo">&lt;/&gt;</span>xml2pdf</a>
+  <span class="spacer"></span>
+  <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
+  <a class="gh" href="https://github.com/sandeepkumarmishra354/xml-to-pdf"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg><span class="txt">Source</span></a>
+</header>
+<div class="layout">
+<nav class="sidebar" aria-label="Documentation">
+<h4>Getting started</h4>
+<ul>
+<li><a href="index.html">Overview</a>
+</li>
+<li><a href="cli.html">Command line</a>
+</li>
+<li><a href="library.html">Go library</a>
+</li>
+</ul>
+<h4>Writing documents</h4>
+<ul>
+<li><a href="guide.html">Guide</a>
+<ul>
+<li><a href="guide.html#structure">Document structure</a></li>
+<li><a href="guide.html#units">Units</a></li>
+<li><a href="guide.html#pages">Page setup</a></li>
+<li><a href="guide.html#layout">Layout &amp; pagination</a></li>
+<li><a href="guide.html#text">Text &amp; fonts</a></li>
+<li><a href="guide.html#styles">Styles</a></li>
+<li><a href="guide.html#colors">Colors</a></li>
+<li><a href="guide.html#variables">Variables</a></li>
+<li><a href="guide.html#loops">Loops</a></li>
+<li><a href="guide.html#bands">Headers &amp; footers</a></li>
+<li><a href="guide.html#watermarks">Watermarks</a></li>
+<li><a href="guide.html#page-selectors">Page selectors</a></li>
+<li><a href="guide.html#errors">Errors</a></li>
+<li><a href="guide.html#limitations">Limitations</a></li>
+</ul>
+</li>
+<li><a href="reference.html">Element reference</a>
+<ul>
+<li><a href="reference.html#document">&lt;document&gt;</a></li>
+<li><a href="reference.html#constants">&lt;constants&gt;</a></li>
+<li><a href="reference.html#resources">&lt;resources&gt;</a></li>
+<li><a href="reference.html#page">&lt;page&gt;</a></li>
+<li><a href="reference.html#header-footer">&lt;header&gt; / &lt;footer&gt;</a></li>
+<li><a href="reference.html#watermark">&lt;watermark&gt;</a></li>
+<li><a href="reference.html#text">&lt;text&gt;</a></li>
+<li><a href="reference.html#inline">Inline tags</a></li>
+<li><a href="reference.html#img">&lt;img&gt;</a></li>
+<li><a href="reference.html#table">&lt;table&gt;</a></li>
+<li><a href="reference.html#row">&lt;row&gt;</a></li>
+<li><a href="reference.html#cell">&lt;cell&gt;</a></li>
+<li><a href="reference.html#spacer">&lt;spacer&gt;</a></li>
+<li><a href="reference.html#page-break">&lt;page-break&gt;</a></li>
+<li><a href="reference.html#for-each">&lt;for-each&gt;</a></li>
+<li><a href="reference.html#style-attributes">Style attributes</a></li>
+</ul>
+</li>
+</ul>
+<h4>More</h4>
+<ul>
+<li><a href="examples.html">Examples</a>
+</li>
+</ul>
+</nav>
+<main>
+<h1>Examples</h1>
+<p class="lead">Complete documents from the <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf/tree/main/examples"><code>examples/</code></a> folder, with their rendered output.</p>
+
+<h2 id="hello">Hello world</h2>
+<p>The smallest useful document: a constant, a named style, a footer with page numbers, a paragraph and a table.</p>
+<div class="split">
+<div>
+
+<pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;document title="Hello" page-size="A5" margin="15mm"&gt;
+  &lt;constants&gt;
+    &lt;const name="name" value="World"/&gt;
+  &lt;/constants&gt;
+
+  &lt;resources&gt;
+    &lt;style id="title" size="24" bold="true" color="#1f4e9c" margin-bottom="8"/&gt;
+  &lt;/resources&gt;
+
+  &lt;footer&gt;&lt;text align="center" size="8" color="gray"&gt;Page {page} of {pages}&lt;/text&gt;&lt;/footer&gt;
+
+  &lt;page&gt;
+    &lt;text style="title"&gt;Hello, ${name}!&lt;/text&gt;
+    &lt;text margin-bottom="10"&gt;This PDF was generated from XML. Text wraps automatically,
+      and you can mix &lt;b&gt;bold&lt;/b&gt;, &lt;i&gt;italic&lt;/i&gt; and &lt;span color="red"&gt;colored&lt;/span&gt; runs.&lt;/text&gt;
+    &lt;table widths="2*,1*" header-bg="#eef2f9"&gt;
+      &lt;row header="true"&gt;&lt;cell&gt;Feature&lt;/cell&gt;&lt;cell&gt;Status&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;Text, images, tables&lt;/cell&gt;&lt;cell&gt;Ready&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;Watermarks, headers, footers&lt;/cell&gt;&lt;cell&gt;Ready&lt;/cell&gt;&lt;/row&gt;
+    &lt;/table&gt;
+  &lt;/page&gt;
+&lt;/document&gt;</code></pre>
+</div>
+<div>
+<img class="shot" src="assets/hello-1.png" alt="Rendered hello.xml" loading="lazy" width="467" height="662">
+<p style="text-align:center;font-size:14px"><a href="assets/hello.pdf">Download PDF</a></p>
+</div>
+</div>
+
+<pre><code class="lang-sh">xml2pdf examples/hello.xml --set name=Alice</code></pre>
+<h2 id="invoice">Invoice</h2>
+<p>This example shows a data-driven document. Customer details and line items come from a JSON file, and the item rows are generated with <code>&lt;for-each&gt;</code>. It also uses:</p>
+<ul>
+  <li>an absolutely positioned title block</li>
+  <li>a borderless two-column table for the addresses</li>
+  <li>a striped item table with a colored header</li>
+  <li>a <code>DRAFT</code> watermark whose text comes from a variable</li>
+  <li>a header that only appears from page 2 onwards</li>
+</ul>
+
+<pre><code class="lang-sh">xml2pdf examples/invoice.xml --data examples/invoice.json -o invoice.pdf
+xml2pdf examples/invoice.xml --data examples/invoice.json --set status=PAID</code></pre>
+<div class="split">
+<div>
+<img class="shot" src="assets/invoice-1.png" alt="Rendered invoice" loading="lazy" width="662" height="936">
+<p style="text-align:center;font-size:14px"><a href="assets/invoice.pdf">Download PDF</a></p>
+</div>
+<div>
+
+<pre><code class="lang-json">{
+  "invoice_no": "INV-2026-0042",
+  "date": "2026-10-24",
+  "due_date": "2026-11-23",
+  "customer": {
+    "name": "Globex Ltd.",
+    "address": "742 Evergreen Terrace, Shelbyville"
+  },
+  "items": [
+    {"name": "Consulting services", "note": "October 2026, 12 hours", "qty": 12, "price": "150.00", "amount": "1,800.00"},
+    {"name": "Hosting (annual)", "note": "Standard plan", "qty": 1, "price": "480.00", "amount": "480.00"},
+    {"name": "Support tickets", "note": "Priority queue", "qty": 5, "price": "40.00", "amount": "200.00"},
+    {"name": "Domain renewal", "note": "globex.example", "qty": 1, "price": "20.00", "amount": "20.00"}
+  ],
+  "total": "2,500.00"
+}</code></pre>
+</div>
+</div>
+
+<h3 id="invoice-source">invoice.xml</h3>
+
+<pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!--
+  Render with:
+    xml2pdf examples/invoice.xml -data examples/invoice.json -o invoice.pdf
+  Override any value from the command line:
+    xml2pdf examples/invoice.xml -data examples/invoice.json -set status=PAID
+  (XML comments may not contain a double dash, hence the single-dash flags.)
+--&gt;
+&lt;document title="Invoice ${invoice_no}" author="${company}"
+          page-size="A4" margin="20mm" font="helvetica" size="10" color="#222"&gt;
+
+  &lt;constants&gt;
+    &lt;const name="company" value="Acme Corp"/&gt;
+    &lt;const name="company_address" value="12 Industrial Way, Springfield"/&gt;
+    &lt;const name="currency" value="$"/&gt;
+    &lt;const name="status" value="DRAFT"/&gt;
+    &lt;const name="brand" value="#1f4e9c"/&gt;
+  &lt;/constants&gt;
+
+  &lt;resources&gt;
+    &lt;image id="logo" src="logo.png"/&gt;
+    &lt;style id="muted" color="#777" size="9"/&gt;
+    &lt;style id="h1" size="22" bold="true" color="${brand}"/&gt;
+    &lt;style id="h2" size="12" bold="true" color="${brand}" margin-top="14" margin-bottom="6"/&gt;
+    &lt;style id="num" align="right"/&gt;
+  &lt;/resources&gt;
+
+  &lt;watermark text="${status}" opacity="0.12" rotate="45" size="110" color="${brand}"/&gt;
+
+  &lt;header pages="2-"&gt;
+    &lt;text style="muted" align="right"&gt;${company} · Invoice ${invoice_no}&lt;/text&gt;
+  &lt;/header&gt;
+
+  &lt;footer&gt;
+    &lt;text style="muted" align="center"&gt;Page {page} of {pages}&lt;/text&gt;
+  &lt;/footer&gt;
+
+  &lt;page&gt;
+    &lt;img ref="logo" width="45mm"/&gt;
+    &lt;!-- Absolutely positioned block in the top right corner. --&gt;
+    &lt;text x="120mm" y="20mm" width="70mm" align="right" style="h1"&gt;INVOICE&lt;/text&gt;
+    &lt;text x="120mm" y="30mm" width="70mm" align="right"&gt;
+      No. &lt;b&gt;${invoice_no}&lt;/b&gt;&lt;br/&gt;
+      Date: ${date}&lt;br/&gt;
+      Due: ${due_date}
+    &lt;/text&gt;
+
+    &lt;spacer height="10"/&gt;
+    &lt;table widths="1*,1*" border="0" padding="0"&gt;
+      &lt;row&gt;
+        &lt;cell&gt;
+          &lt;text style="muted"&gt;FROM&lt;/text&gt;
+          &lt;text bold="true"&gt;${company}&lt;/text&gt;
+          &lt;text&gt;${company_address}&lt;/text&gt;
+        &lt;/cell&gt;
+        &lt;cell&gt;
+          &lt;text style="muted"&gt;BILL TO&lt;/text&gt;
+          &lt;text bold="true"&gt;${customer.name}&lt;/text&gt;
+          &lt;text&gt;${customer.address}&lt;/text&gt;
+        &lt;/cell&gt;
+      &lt;/row&gt;
+    &lt;/table&gt;
+
+    &lt;text style="h2"&gt;Items&lt;/text&gt;
+    &lt;table widths="4*,1*,1.5*,1.5*" border="0.5" border-color="#bbb" padding="5 6"
+           header-bg="${brand}" stripe="#f2f5fa"&gt;
+      &lt;row header="true" color="white"&gt;
+        &lt;cell&gt;Description&lt;/cell&gt;
+        &lt;cell align="right"&gt;Qty&lt;/cell&gt;
+        &lt;cell align="right"&gt;Unit price&lt;/cell&gt;
+        &lt;cell align="right"&gt;Amount&lt;/cell&gt;
+      &lt;/row&gt;
+      &lt;!-- One row per element of the "items" array in invoice.json. --&gt;
+      &lt;for-each items="${items}" var="item"&gt;
+        &lt;row&gt;
+          &lt;cell&gt;${item.name}&lt;br/&gt;&lt;span style="muted"&gt;${item.note}&lt;/span&gt;&lt;/cell&gt;
+          &lt;cell style="num"&gt;${item.qty}&lt;/cell&gt;
+          &lt;cell style="num"&gt;${currency}${item.price}&lt;/cell&gt;
+          &lt;cell style="num"&gt;${currency}${item.amount}&lt;/cell&gt;
+        &lt;/row&gt;
+      &lt;/for-each&gt;
+      &lt;row bold="true"&gt;
+        &lt;cell colspan="3" align="right"&gt;Total&lt;/cell&gt;
+        &lt;cell style="num"&gt;${currency}${total}&lt;/cell&gt;
+      &lt;/row&gt;
+    &lt;/table&gt;
+
+    &lt;text style="h2"&gt;Notes&lt;/text&gt;
+    &lt;text align="justify"&gt;
+      Thank you for your business. Payment is due within &lt;b&gt;30 days&lt;/b&gt; of the invoice date.
+      Please include the invoice number &lt;i&gt;${invoice_no}&lt;/i&gt; with your payment. Late payments
+      may be subject to a fee of &lt;u&gt;1.5% per month&lt;/u&gt;.
+    &lt;/text&gt;
+  &lt;/page&gt;
+&lt;/document&gt;</code></pre>
+<h2 id="report">Multi-page report</h2>
+<p>A 5-page report that shows layout features:</p>
+<ul>
+  <li>a cover page without a header</li>
+  <li>a table that continues across pages, repeating its header row</li>
+  <li>a header from page 2 onwards</li>
+  <li>a back-layer image watermark and a front "CONFIDENTIAL" stamp on every page</li>
+  <li>an explicit page break</li>
+  <li>long-word breaking and Latin-1 text</li>
+  <li>a final landscape page with its own margin</li>
+</ul>
+
+<pre><code class="lang-sh">xml2pdf examples/report.xml</code></pre>
+<div class="gallery">
+  <figure><img src="assets/report-1.png" alt="Report page 1: cover" loading="lazy" width="680" height="880"><figcaption>1 · Cover (no header)</figcaption></figure>
+  <figure><img src="assets/report-2.png" alt="Report page 2: summary and incident table" loading="lazy" width="680" height="880"><figcaption>2 · Table starts</figcaption></figure>
+  <figure><img src="assets/report-3.png" alt="Report page 3: table continues" loading="lazy" width="680" height="880"><figcaption>3 · Header row repeated</figcaption></figure>
+  <figure><img src="assets/report-4.png" alt="Report page 4: appendix after a page break" loading="lazy" width="680" height="880"><figcaption>4 · After &lt;page-break/&gt;</figcaption></figure>
+  <figure><img src="assets/report-5.png" alt="Report page 5: landscape" loading="lazy" width="880" height="680"><figcaption>5 · Landscape page</figcaption></figure>
+</div>
+<p><a href="assets/report.pdf">Download the PDF</a></p>
+
+<h3 id="report-source">report.xml</h3>
+
+<pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!--
+  A multi-page report showing automatic page breaks, tables that continue
+  across pages with a repeated header row, page-specific headers/footers,
+  an image watermark and per-page size/orientation overrides.
+
+  Render with:  xml2pdf examples/report.xml
+--&gt;
+&lt;document title="${title}" author="${team}" page-size="Letter" margin="0.75in" font="times" size="11"&gt;
+
+  &lt;constants&gt;
+    &lt;const name="title" value="Quarterly Operations Report"/&gt;
+    &lt;const name="team" value="Platform Team"/&gt;
+    &lt;const name="quarter" value="Q3 2026"/&gt;
+    &lt;const name="lorem"&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.&lt;/const&gt;
+  &lt;/constants&gt;
+
+  &lt;resources&gt;
+    &lt;image id="logo" src="logo.png"/&gt;
+    &lt;style id="sans" font="helvetica"/&gt;
+    &lt;style id="title" extends="sans" size="28" bold="true" color="#1f4e9c" align="center"/&gt;
+    &lt;style id="subtitle" extends="sans" size="14" color="#555" align="center"/&gt;
+    &lt;style id="h1" extends="sans" size="16" bold="true" color="#1f4e9c" margin-top="18" margin-bottom="8"/&gt;
+    &lt;style id="body" align="justify" margin-bottom="8" line-height="1.35"/&gt;
+    &lt;style id="small" extends="sans" size="8" color="#777"/&gt;
+  &lt;/resources&gt;
+
+  &lt;!-- Faint logo behind content on every page except the cover. --&gt;
+  &lt;watermark image="logo" width="60%" opacity="0.06" rotate="30" layer="back" pages="2-"/&gt;
+  &lt;watermark text="CONFIDENTIAL" size="12" rotate="0" opacity="0.6" color="red" y="15pt" pages="all"/&gt;
+
+  &lt;header pages="2-"&gt;
+    &lt;table widths="1*,1*" border="0" padding="0 0 4 0"&gt;
+      &lt;row style="small"&gt;
+        &lt;cell&gt;${title}&lt;/cell&gt;
+        &lt;cell align="right"&gt;${quarter}&lt;/cell&gt;
+      &lt;/row&gt;
+    &lt;/table&gt;
+  &lt;/header&gt;
+
+  &lt;footer&gt;
+    &lt;text style="small" align="center"&gt;${team} · Page {page} of {pages}&lt;/text&gt;
+  &lt;/footer&gt;
+
+  &lt;!-- Cover page: no header, centered content. --&gt;
+  &lt;page header="false"&gt;
+    &lt;spacer height="2in"/&gt;
+    &lt;img ref="logo" width="2.5in" align="center"/&gt;
+    &lt;spacer height="0.5in"/&gt;
+    &lt;text style="title"&gt;${title}&lt;/text&gt;
+    &lt;text style="subtitle" margin-top="8"&gt;${quarter} · Prepared by ${team}&lt;/text&gt;
+  &lt;/page&gt;
+
+  &lt;page&gt;
+    &lt;text style="h1"&gt;1. Summary&lt;/text&gt;
+    &lt;text style="body"&gt;${lorem}&lt;/text&gt;
+    &lt;text style="body"&gt;The platform served &lt;b&gt;99.98%&lt;/b&gt; of requests within SLO this quarter.
+      Notable changes include the migration to the new storage tier, a &lt;i&gt;40%&lt;/i&gt; reduction
+      in cold-start latency, and the retirement of three legacy services. ${lorem}&lt;/text&gt;
+
+    &lt;text style="h1"&gt;2. Incident log&lt;/text&gt;
+    &lt;text style="body"&gt;The table below continues across pages; its header row repeats automatically.&lt;/text&gt;
+    &lt;table widths="0.8in,1*,3*,0.9in" header-bg="#1f4e9c" stripe="#eef2f9" border="0.4" border-color="#9aa" size="10"&gt;
+      &lt;row header="true" color="white" font="helvetica"&gt;&lt;cell&gt;ID&lt;/cell&gt;&lt;cell&gt;Service&lt;/cell&gt;&lt;cell&gt;Description&lt;/cell&gt;&lt;cell align="right"&gt;Minutes&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-101&lt;/cell&gt;&lt;cell&gt;api-gateway&lt;/cell&gt;&lt;cell&gt;Elevated 5xx after config push; rolled back.&lt;/cell&gt;&lt;cell align="right"&gt;14&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-102&lt;/cell&gt;&lt;cell&gt;auth&lt;/cell&gt;&lt;cell&gt;Token refresh latency spike during key rotation.&lt;/cell&gt;&lt;cell align="right"&gt;22&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-103&lt;/cell&gt;&lt;cell&gt;storage&lt;/cell&gt;&lt;cell&gt;Replica lag on shard 7 caused stale reads for a subset of tenants.&lt;/cell&gt;&lt;cell align="right"&gt;41&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-104&lt;/cell&gt;&lt;cell&gt;billing&lt;/cell&gt;&lt;cell&gt;Duplicate invoice emails sent to 312 customers.&lt;/cell&gt;&lt;cell align="right"&gt;9&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-105&lt;/cell&gt;&lt;cell&gt;search&lt;/cell&gt;&lt;cell&gt;Index rebuild exceeded memory limits; restarted with larger nodes.&lt;/cell&gt;&lt;cell align="right"&gt;63&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-106&lt;/cell&gt;&lt;cell&gt;api-gateway&lt;/cell&gt;&lt;cell&gt;TLS certificate renewal failed in one region.&lt;/cell&gt;&lt;cell align="right"&gt;17&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-107&lt;/cell&gt;&lt;cell&gt;queue&lt;/cell&gt;&lt;cell&gt;Consumer group rebalancing storm after deploy.&lt;/cell&gt;&lt;cell align="right"&gt;28&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-108&lt;/cell&gt;&lt;cell&gt;storage&lt;/cell&gt;&lt;cell&gt;Disk pressure on two nodes; data rebalanced.&lt;/cell&gt;&lt;cell align="right"&gt;12&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-109&lt;/cell&gt;&lt;cell&gt;auth&lt;/cell&gt;&lt;cell&gt;SSO provider outage (upstream).&lt;/cell&gt;&lt;cell align="right"&gt;55&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-110&lt;/cell&gt;&lt;cell&gt;web&lt;/cell&gt;&lt;cell&gt;CDN misconfiguration served stale assets.&lt;/cell&gt;&lt;cell align="right"&gt;19&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-111&lt;/cell&gt;&lt;cell&gt;search&lt;/cell&gt;&lt;cell&gt;Query timeouts for wildcard searches.&lt;/cell&gt;&lt;cell align="right"&gt;33&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-112&lt;/cell&gt;&lt;cell&gt;billing&lt;/cell&gt;&lt;cell&gt;Tax calculation off by one cent for EU invoices.&lt;/cell&gt;&lt;cell align="right"&gt;7&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-113&lt;/cell&gt;&lt;cell&gt;queue&lt;/cell&gt;&lt;cell&gt;Dead-letter queue filled after schema change.&lt;/cell&gt;&lt;cell align="right"&gt;26&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-114&lt;/cell&gt;&lt;cell&gt;api-gateway&lt;/cell&gt;&lt;cell&gt;Rate limiter misapplied to internal traffic.&lt;/cell&gt;&lt;cell align="right"&gt;11&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-115&lt;/cell&gt;&lt;cell&gt;storage&lt;/cell&gt;&lt;cell&gt;Snapshot job overlapped with compaction.&lt;/cell&gt;&lt;cell align="right"&gt;38&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-116&lt;/cell&gt;&lt;cell&gt;web&lt;/cell&gt;&lt;cell&gt;Login page broken in one browser after CSS update.&lt;/cell&gt;&lt;cell align="right"&gt;15&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-117&lt;/cell&gt;&lt;cell&gt;auth&lt;/cell&gt;&lt;cell&gt;MFA SMS delivery delays in APAC.&lt;/cell&gt;&lt;cell align="right"&gt;47&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-118&lt;/cell&gt;&lt;cell&gt;search&lt;/cell&gt;&lt;cell&gt;Relevance regression after model update.&lt;/cell&gt;&lt;cell align="right"&gt;0&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-119&lt;/cell&gt;&lt;cell&gt;queue&lt;/cell&gt;&lt;cell&gt;Producer retries amplified a brief network partition.&lt;/cell&gt;&lt;cell align="right"&gt;21&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-120&lt;/cell&gt;&lt;cell&gt;billing&lt;/cell&gt;&lt;cell&gt;Webhook signature verification failed for one partner.&lt;/cell&gt;&lt;cell align="right"&gt;13&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-121&lt;/cell&gt;&lt;cell&gt;storage&lt;/cell&gt;&lt;cell&gt;Object listing pagination returned duplicates.&lt;/cell&gt;&lt;cell align="right"&gt;18&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-122&lt;/cell&gt;&lt;cell&gt;web&lt;/cell&gt;&lt;cell&gt;Dashboard charts failed to load for large accounts.&lt;/cell&gt;&lt;cell align="right"&gt;24&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-123&lt;/cell&gt;&lt;cell&gt;api-gateway&lt;/cell&gt;&lt;cell&gt;Request body size limit regression.&lt;/cell&gt;&lt;cell align="right"&gt;16&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;INC-124&lt;/cell&gt;&lt;cell&gt;auth&lt;/cell&gt;&lt;cell&gt;Session cookies not cleared on logout in one flow.&lt;/cell&gt;&lt;cell align="right"&gt;5&lt;/cell&gt;&lt;/row&gt;
+      &lt;row bold="true"&gt;&lt;cell colspan="3" align="right"&gt;Total&lt;/cell&gt;&lt;cell align="right"&gt;551&lt;/cell&gt;&lt;/row&gt;
+    &lt;/table&gt;
+
+    &lt;text style="h1"&gt;3. Outlook&lt;/text&gt;
+    &lt;text style="body"&gt;${lorem}&lt;/text&gt;
+    &lt;text style="body"&gt;${lorem}&lt;/text&gt;
+    &lt;page-break/&gt;
+    &lt;text style="h1"&gt;4. Appendix&lt;/text&gt;
+    &lt;text style="body"&gt;Words that are too long for a line are broken at character boundaries:
+      SupercalifragilisticexpialidociousSupercalifragilisticexpialidociousSupercalifragilisticexpialidociousSupercalifragilisticexpialidocious.&lt;/text&gt;
+    &lt;text style="body"&gt;Unicode text in the Latin-1 range works with the built-in fonts: café, naïve, Zürich, €100, “quotes” — dashes.&lt;/text&gt;
+  &lt;/page&gt;
+
+  &lt;!-- A landscape page with its own margin. --&gt;
+  &lt;page orientation="landscape" margin="0.5in"&gt;
+    &lt;text style="h1"&gt;5. Capacity overview (landscape)&lt;/text&gt;
+    &lt;table widths="2*,1*,1*,1*,1*,1*,1*" header-bg="#ddd" size="10" font="helvetica"&gt;
+      &lt;row header="true"&gt;&lt;cell&gt;Region&lt;/cell&gt;&lt;cell align="right"&gt;Jan&lt;/cell&gt;&lt;cell align="right"&gt;Feb&lt;/cell&gt;&lt;cell align="right"&gt;Mar&lt;/cell&gt;&lt;cell align="right"&gt;Apr&lt;/cell&gt;&lt;cell align="right"&gt;May&lt;/cell&gt;&lt;cell align="right"&gt;Jun&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;us-east&lt;/cell&gt;&lt;cell align="right"&gt;71%&lt;/cell&gt;&lt;cell align="right"&gt;74%&lt;/cell&gt;&lt;cell align="right"&gt;78%&lt;/cell&gt;&lt;cell align="right"&gt;80%&lt;/cell&gt;&lt;cell align="right"&gt;77%&lt;/cell&gt;&lt;cell align="right"&gt;82%&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;eu-west&lt;/cell&gt;&lt;cell align="right"&gt;55%&lt;/cell&gt;&lt;cell align="right"&gt;58%&lt;/cell&gt;&lt;cell align="right"&gt;61%&lt;/cell&gt;&lt;cell align="right"&gt;60%&lt;/cell&gt;&lt;cell align="right"&gt;63%&lt;/cell&gt;&lt;cell align="right"&gt;66%&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell valign="middle"&gt;ap-south&lt;br/&gt;&lt;span style="small"&gt;new region&lt;/span&gt;&lt;/cell&gt;&lt;cell align="right" valign="middle"&gt;12%&lt;/cell&gt;&lt;cell align="right" valign="middle"&gt;19%&lt;/cell&gt;&lt;cell align="right" valign="middle"&gt;25%&lt;/cell&gt;&lt;cell align="right" valign="middle"&gt;31%&lt;/cell&gt;&lt;cell align="right" valign="middle"&gt;36%&lt;/cell&gt;&lt;cell align="right" valign="middle"&gt;40%&lt;/cell&gt;&lt;/row&gt;
+    &lt;/table&gt;
+  &lt;/page&gt;
+&lt;/document&gt;</code></pre>
+<nav class="pager"><a class="prev" href="reference.html"><small>Previous</small>Element reference</a></nav>
+<footer class="site">xml2pdf is open source. <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf">Source on GitHub</a> · <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf/issues">Report an issue</a></footer>
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<h1>Command line</h1>
+<p class="lead">The <code>xml2pdf</code> binary renders one XML file to one PDF. It's a single static executable with no runtime dependencies.</p>
+
+<h2 id="install">Install</h2>
+<h3 id="go-install">With Go</h3>
+
+```sh
+go install github.com/sandeepkumarmishra354/xml-to-pdf/cmd/xml2pdf@latest
+```
+<p>This installs <code>xml2pdf</code> into <code>$(go env GOPATH)/bin</code>. It needs Go 1.24 or newer.</p>
+
+<h3 id="from-source">From source</h3>
+
+```sh
+git clone https://github.com/sandeepkumarmishra354/xml-to-pdf
+cd xml-to-pdf
+make build          # static binary at bin/xml2pdf
+```
+
+<h3 id="cross-compile">Cross-compiling</h3>
+<p>The renderer is pure Go (no cgo), so you can build binaries for every platform from any machine:</p>
+
+```sh
+make dist
+# dist/xml2pdf-linux-amd64        dist/xml2pdf-linux-arm64
+# dist/xml2pdf-darwin-amd64       dist/xml2pdf-darwin-arm64
+# dist/xml2pdf-windows-amd64.exe  dist/xml2pdf-windows-arm64.exe
+```
+<p>Copy the binary for your platform anywhere on your <code>PATH</code>; nothing else is needed.</p>
+
+<h2 id="usage">Usage</h2>
+
+```text
+xml2pdf [flags] input.xml
+```
+<p>Flags may come before or after the input file. Both <code>-flag</code> and <code>--flag</code> forms work.</p>
+<div class="table-wrap"><table>
+<tr><th>Flag</th><th>Description</th></tr>
+<tr><td><code>-o FILE</code></td><td>Output PDF path. The default is the input path with a <code>.pdf</code> extension (<code>report.xml</code> → <code>report.pdf</code>). Use <code>-</code> to write to standard output.</td></tr>
+<tr><td><code>--data FILE</code></td><td>A JSON file whose top level is an object. Its values are available as <code>${key}</code>, <code>${a.b}</code> or <code>${list.0.c}</code>, and its arrays can be looped over with <code>&lt;for-each&gt;</code>.</td></tr>
+<tr><td><code>--set KEY=VALUE</code></td><td>Sets a variable. Repeat it for several. It overrides <code>--data</code> and document constants.</td></tr>
+<tr><td><code>--base-dir DIR</code></td><td>Directory that relative image paths resolve against. The default is the input file's directory, or the working directory when reading from stdin.</td></tr>
+<tr><td><code>--version</code></td><td>Prints the version and exits.</td></tr>
+<tr><td><code>-h</code>, <code>--help</code></td><td>Shows the help.</td></tr>
+</table></div>
+<p>Use <code>-</code> as the input file to read XML from standard input.</p>
+
+<h2 id="examples">Examples</h2>
+
+```sh
+# Render, writing report.pdf next to report.xml
+xml2pdf report.xml
+
+# Choose the output path
+xml2pdf report.xml -o out/report-2026.pdf
+
+# Fill a template from JSON
+xml2pdf invoice.xml --data customers/globex.json -o globex.pdf
+
+# Override individual values (handy in scripts)
+xml2pdf invoice.xml --data globex.json --set status=PAID --set due_date=2026-12-01
+
+# Pipes: read XML from stdin, write the PDF to stdout
+generate-xml | xml2pdf - --base-dir ./assets -o - > out.pdf
+
+# Batch rendering
+for f in data/*.json; do
+  xml2pdf template.xml --data "$f" -o "out/$(basename "$f" .json).pdf"
+done
+```
+
+<h2 id="exit-codes">Exit status and errors</h2>
+<p><code>xml2pdf</code> exits with <code>0</code> on success. On any error it prints a message to standard error, exits with <code>1</code>, and doesn't write the output file. Messages include the file and line:</p>
+
+```text
+$ xml2pdf invoice.xml
+xml2pdf: invoice.xml: line 41: undefined variable "customer.nmae"
+```
+
+<h2 id="makefile">Makefile targets</h2>
+<div class="table-wrap"><table>
+<tr><th>Target</th><th>Description</th></tr>
+<tr><td><code>make build</code></td><td>Builds a static <code>bin/xml2pdf</code> with the version from <code>git describe</code>.</td></tr>
+<tr><td><code>make test</code></td><td>Runs the test suite.</td></tr>
+<tr><td><code>make vet</code></td><td>Checks formatting (<code>gofmt</code>) and runs <code>go vet</code>.</td></tr>
+<tr><td><code>make examples</code></td><td>Renders <code>examples/*.xml</code> into <code>bin/</code>.</td></tr>
+<tr><td><code>make dist</code></td><td>Cross-compiles release binaries into <code>dist/</code>.</td></tr>
+<tr><td><code>make docs</code></td><td>Rebuilds this documentation site in <code>docs/</code>.</td></tr>
+<tr><td><code>make clean</code></td><td>Removes <code>bin/</code> and <code>dist/</code>.</td></tr>
+</table></div>

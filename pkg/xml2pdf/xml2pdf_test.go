@@ -7,7 +7,9 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 	"testing"
+	"time"
 )
 
 var countRe = regexp.MustCompile(`/Type /Pages\s*/Kids \[[^\]]*\]\s*/Count (\d+)`)
@@ -99,5 +101,36 @@ func TestVarsOverrideConstants(t *testing.T) {
 	}
 	if !bytes.Contains(a.Bytes(), []byte("%PDF")) || bytes.Equal(a.Bytes(), b.Bytes()) {
 		t.Error("expected two different PDFs")
+	}
+}
+
+func TestConcurrentDeterministic(t *testing.T) {
+	data, err := LoadData("../../examples/invoice.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	src, err := os.ReadFile("../../examples/invoice.xml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	opts := Options{Data: data, BaseDir: "../../examples", CreationDate: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)}
+	outs := make([][]byte, 8)
+	var wg sync.WaitGroup
+	for i := range outs {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			var buf bytes.Buffer
+			if err := Render(bytes.NewReader(src), &buf, opts); err != nil {
+				t.Error(err)
+			}
+			outs[i] = buf.Bytes()
+		}(i)
+	}
+	wg.Wait()
+	for i := 1; i < len(outs); i++ {
+		if !bytes.Equal(outs[0], outs[i]) {
+			t.Fatalf("render %d produced different bytes", i)
+		}
 	}
 }

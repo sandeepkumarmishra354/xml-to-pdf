@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>xml2pdf: generate PDFs from XML</title>
+<meta name="description" content="xml2pdf: generate PDFs from declarative XML. Documentation for the XML tags, attributes, command line tool and Go library.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e9c'/%3E%3Ctext x='16' y='21' font-size='13' text-anchor='middle' fill='white' font-family='monospace'%3E%3C/%3E%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="Toggle navigation"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  <a class="brand" href="index.html"><span class="logo">&lt;/&gt;</span>xml2pdf</a>
+  <span class="spacer"></span>
+  <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
+  <a class="gh" href="https://github.com/sandeepkumarmishra354/xml-to-pdf"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg><span class="txt">Source</span></a>
+</header>
+<div class="layout">
+<nav class="sidebar" aria-label="Documentation">
+<h4>Getting started</h4>
+<ul>
+<li><a href="index.html">Overview</a>
+</li>
+<li><a href="cli.html">Command line</a>
+</li>
+<li><a href="library.html">Go library</a>
+</li>
+</ul>
+<h4>Writing documents</h4>
+<ul>
+<li><a href="guide.html">Guide</a>
+<ul>
+<li><a href="guide.html#structure">Document structure</a></li>
+<li><a href="guide.html#units">Units</a></li>
+<li><a href="guide.html#pages">Page setup</a></li>
+<li><a href="guide.html#layout">Layout &amp; pagination</a></li>
+<li><a href="guide.html#text">Text &amp; fonts</a></li>
+<li><a href="guide.html#styles">Styles</a></li>
+<li><a href="guide.html#colors">Colors</a></li>
+<li><a href="guide.html#variables">Variables</a></li>
+<li><a href="guide.html#loops">Loops</a></li>
+<li><a href="guide.html#bands">Headers &amp; footers</a></li>
+<li><a href="guide.html#watermarks">Watermarks</a></li>
+<li><a href="guide.html#page-selectors">Page selectors</a></li>
+<li><a href="guide.html#errors">Errors</a></li>
+<li><a href="guide.html#limitations">Limitations</a></li>
+</ul>
+</li>
+<li><a href="reference.html">Element reference</a>
+<ul>
+<li><a href="reference.html#document">&lt;document&gt;</a></li>
+<li><a href="reference.html#constants">&lt;constants&gt;</a></li>
+<li><a href="reference.html#resources">&lt;resources&gt;</a></li>
+<li><a href="reference.html#page">&lt;page&gt;</a></li>
+<li><a href="reference.html#header-footer">&lt;header&gt; / &lt;footer&gt;</a></li>
+<li><a href="reference.html#watermark">&lt;watermark&gt;</a></li>
+<li><a href="reference.html#text">&lt;text&gt;</a></li>
+<li><a href="reference.html#inline">Inline tags</a></li>
+<li><a href="reference.html#img">&lt;img&gt;</a></li>
+<li><a href="reference.html#table">&lt;table&gt;</a></li>
+<li><a href="reference.html#row">&lt;row&gt;</a></li>
+<li><a href="reference.html#cell">&lt;cell&gt;</a></li>
+<li><a href="reference.html#spacer">&lt;spacer&gt;</a></li>
+<li><a href="reference.html#page-break">&lt;page-break&gt;</a></li>
+<li><a href="reference.html#for-each">&lt;for-each&gt;</a></li>
+<li><a href="reference.html#style-attributes">Style attributes</a></li>
+</ul>
+</li>
+</ul>
+<h4>More</h4>
+<ul>
+<li><a href="examples.html">Examples</a>
+</li>
+</ul>
+</nav>
+<main>
+<h1>xml2pdf</h1>
+<p class="lead">Describe a document in XML (pages, text, images, tables, watermarks, headers and footers) and get a PDF. It ships as a single static binary with no runtime dependencies and renders in milliseconds.</p>
+
+<div class="split">
+<div>
+
+<pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;document title="Hello" page-size="A5" margin="15mm"&gt;
+  &lt;constants&gt;
+    &lt;const name="name" value="World"/&gt;
+  &lt;/constants&gt;
+
+  &lt;resources&gt;
+    &lt;style id="title" size="24" bold="true" color="#1f4e9c" margin-bottom="8"/&gt;
+  &lt;/resources&gt;
+
+  &lt;footer&gt;&lt;text align="center" size="8" color="gray"&gt;Page {page} of {pages}&lt;/text&gt;&lt;/footer&gt;
+
+  &lt;page&gt;
+    &lt;text style="title"&gt;Hello, ${name}!&lt;/text&gt;
+    &lt;text margin-bottom="10"&gt;This PDF was generated from XML. Text wraps automatically,
+      and you can mix &lt;b&gt;bold&lt;/b&gt;, &lt;i&gt;italic&lt;/i&gt; and &lt;span color="red"&gt;colored&lt;/span&gt; runs.&lt;/text&gt;
+    &lt;table widths="2*,1*" header-bg="#eef2f9"&gt;
+      &lt;row header="true"&gt;&lt;cell&gt;Feature&lt;/cell&gt;&lt;cell&gt;Status&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;Text, images, tables&lt;/cell&gt;&lt;cell&gt;Ready&lt;/cell&gt;&lt;/row&gt;
+      &lt;row&gt;&lt;cell&gt;Watermarks, headers, footers&lt;/cell&gt;&lt;cell&gt;Ready&lt;/cell&gt;&lt;/row&gt;
+    &lt;/table&gt;
+  &lt;/page&gt;
+&lt;/document&gt;</code></pre>
+</div>
+<div>
+<img class="shot" src="assets/hello-1.png" alt="The rendered hello.xml: a title, a paragraph with bold, italic and red text, a small table and a page footer." width="467" height="662">
+<p style="font-size:14px;color:var(--fg-muted);text-align:center"><a href="assets/hello.pdf">hello.pdf</a> rendered from the XML on the left</p>
+</div>
+</div>
+
+<h2 id="features">Features</h2>
+<ul>
+  <li><strong>Text:</strong> automatic wrapping; left, center, right and justified alignment; inline <code>&lt;b&gt;</code>, <code>&lt;i&gt;</code>, <code>&lt;u&gt;</code>, <code>&lt;span&gt;</code> and <code>&lt;br/&gt;</code>.</li>
+  <li><strong>Images:</strong> PNG, JPEG and GIF, scaled with their aspect ratio preserved.</li>
+  <li><strong>Tables:</strong> fractional, fixed and percentage column widths, <code>colspan</code>, vertical alignment, borders, padding and striped rows. When a table crosses a page break, its header rows repeat.</li>
+  <li><strong>Layout:</strong> content flows from page to page automatically, and any element can be pinned to exact <code>x</code>/<code>y</code> coordinates.</li>
+  <li><strong>Watermarks:</strong> text or image, with opacity, rotation, a front or back layer, and a choice of pages.</li>
+  <li><strong>Headers and footers:</strong> support <code>{page}</code> and <code>{pages}</code> numbering.</li>
+  <li><strong>Styles:</strong> reusable named styles with inheritance, and a cascade from document to page to element.</li>
+  <li><strong>Templating:</strong> <code>${variables}</code> come from constants in the document, a JSON data file or the command line. <code>&lt;for-each&gt;</code> loops repeat rows, blocks or whole pages.</li>
+  <li><strong>Helpful errors:</strong> unknown tags or attributes, missing styles, undefined variables and missing images are reported with their line number.</li>
+</ul>
+
+<h2 id="quick-start">Quick start</h2>
+<p>Build the binary (Go 1.24 or newer):</p>
+
+<pre><code class="lang-sh">git clone https://github.com/sandeepkumarmishra354/xml-to-pdf
+cd xml-to-pdf
+make build                      # produces bin/xml2pdf</code></pre>
+<p>Render a document:</p>
+
+<pre><code class="lang-sh">bin/xml2pdf examples/hello.xml                       # writes examples/hello.pdf
+bin/xml2pdf examples/hello.xml --set name=Alice      # override a variable
+bin/xml2pdf examples/invoice.xml --data examples/invoice.json -o invoice.pdf</code></pre>
+<p>Every document has a <code>&lt;document&gt;</code> root with one or more <code>&lt;page&gt;</code> elements. Everything else is optional. The <a href="guide.html">guide</a> explains how it all fits together, and the <a href="reference.html">element reference</a> lists every tag and attribute.</p>
+
+<h2 id="next">Where to next</h2>
+<div class="cards">
+  <a class="card" href="guide.html"><strong>Guide</strong><span>Units, layout and pagination, styles, variables, loops, headers, watermarks.</span></a>
+  <a class="card" href="reference.html"><strong>Element reference</strong><span>Every XML tag with its attributes, defaults and examples.</span></a>
+  <a class="card" href="cli.html"><strong>Command line</strong><span>Flags, data files, stdin and stdout, building and cross-compiling.</span></a>
+  <a class="card" href="library.html"><strong>Go library</strong><span>Embed the renderer in your own Go programs and servers.</span></a>
+  <a class="card" href="examples.html"><strong>Examples</strong><span>A full invoice and a multi-page report, with source and output.</span></a>
+</div>
+
+<h2 id="gallery">Gallery</h2>
+<div class="gallery">
+  <figure><a href="examples.html#invoice"><img src="assets/invoice-1.png" alt="Invoice example" loading="lazy" width="662" height="936"></a><figcaption>Invoice (data from JSON)</figcaption></figure>
+  <figure><a href="examples.html#report"><img src="assets/report-1.png" alt="Report cover page" loading="lazy" width="680" height="880"></a><figcaption>Report: cover page</figcaption></figure>
+  <figure><a href="examples.html#report"><img src="assets/report-2.png" alt="Report page with table" loading="lazy" width="680" height="880"></a><figcaption>Report: a table across pages</figcaption></figure>
+  <figure><a href="examples.html#report"><img src="assets/report-5.png" alt="Report landscape page" loading="lazy" width="880" height="680"></a><figcaption>Report: landscape page</figcaption></figure>
+</div>
+
+<nav class="pager"><span></span><a class="next" href="cli.html"><small>Next</small>Command line</a></nav>
+<footer class="site">xml2pdf is open source. <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf">Source on GitHub</a> · <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf/issues">Report an issue</a></footer>
+</main>
+</div>
+</body>
+</html>

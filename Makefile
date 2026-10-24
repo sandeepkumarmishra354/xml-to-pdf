@@ -3,7 +3,7 @@ VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 LDFLAGS := -s -w -X main.version=$(VERSION)
 PLATFORMS := linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 windows/arm64
 
-.PHONY: build test vet examples dist clean
+.PHONY: build test vet examples docs dist clean
 
 build:
 	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/$(BINARY) ./cmd/xml2pdf
@@ -17,6 +17,17 @@ vet:
 examples: build
 	bin/$(BINARY) examples/invoice.xml -data examples/invoice.json -o bin/invoice.pdf
 	bin/$(BINARY) examples/report.xml -o bin/report.pdf
+
+# Rebuild the static documentation site (docs/) from docs-src/, including
+# fresh renders of the example documents.
+docs: build
+	bin/$(BINARY) examples/hello.xml -o docs/assets/hello.pdf
+	bin/$(BINARY) examples/invoice.xml -data examples/invoice.json -o docs/assets/invoice.pdf
+	bin/$(BINARY) examples/report.xml -o docs/assets/report.pdf
+	@if command -v pdftoppm >/dev/null; then \
+		for f in hello invoice report; do pdftoppm -r 80 -png docs/assets/$$f.pdf docs/assets/$$f; done; \
+	else echo "pdftoppm not found: skipping PNG previews"; fi
+	python3 docs-src/build.py
 
 # Cross-compile static binaries for every platform into dist/.
 dist:

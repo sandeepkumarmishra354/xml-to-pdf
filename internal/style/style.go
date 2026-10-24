@@ -85,7 +85,6 @@ var Fonts = map[string]string{
 	"courier":         "courier",
 	"courier new":     "courier",
 	"monospace":       "courier",
-	"symbol":          "symbol",
 	"zapfdingbats":    "zapfdingbats",
 }
 
@@ -125,7 +124,7 @@ func ParseProps(get func(string) (string, bool)) (Props, error) {
 	if v, ok := get("font"); ok {
 		f, ok := Fonts[strings.ToLower(strings.TrimSpace(v))]
 		if !ok {
-			return p, fmt.Errorf("unknown font %q (available: helvetica, times, courier, symbol, zapfdingbats)", v)
+			return p, fmt.Errorf("unknown font %q (available: helvetica, times, courier, zapfdingbats)", v)
 		}
 		p.Font = &f
 	}

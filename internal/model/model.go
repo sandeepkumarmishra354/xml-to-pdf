@@ -3,6 +3,7 @@ package model
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -54,8 +55,13 @@ func (d *Document) ImagePaths() []string {
 			}
 		}
 	}
-	for _, p := range d.Images {
-		add(p)
+	ids := make([]string, 0, len(d.Images))
+	for id := range d.Images {
+		ids = append(ids, id)
+	}
+	sort.Strings(ids)
+	for _, id := range ids {
+		add(d.Images[id])
 	}
 	for _, w := range d.Watermarks {
 		add(w.Image)
