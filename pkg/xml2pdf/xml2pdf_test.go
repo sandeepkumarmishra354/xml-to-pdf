@@ -29,7 +29,7 @@ func pdfText(t *testing.T, path string) string {
 	if _, err := exec.LookPath("pdftotext"); err != nil {
 		t.Skip("pdftotext not installed")
 	}
-	out, err := exec.Command("pdftotext", "-layout", path, "-").Output()
+	out, err := exec.Command("pdftotext", "-enc", "UTF-8", "-layout", path, "-").Output()
 	if err != nil {
 		t.Fatal(err)
 	}
