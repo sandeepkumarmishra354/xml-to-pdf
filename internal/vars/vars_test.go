@@ -86,3 +86,82 @@ func TestTree(t *testing.T) {
 		t.Errorf("expected line 2 error, got %v", err)
 	}
 }
+
+func expandSrc(t *testing.T, src string, d map[string]any) (*parser.Node, error) {
+	t.Helper()
+	root, err := parser.Parse(bytes.NewBufferString(src))
+	if err != nil {
+		t.Fatal(err)
+	}
+	consts, err := CollectConstants(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return root, ExpandTree(root, New(map[string]string{"cur": "$"}, d, consts))
+}
+
+func TestForEach(t *testing.T) {
+	d := data(t, `{
+	  "items": [
+	    {"name": "A", "qty": 2, "tags": ["x", "y"]},
+	    {"name": "B", "qty": 1.5, "tags": []}
+	  ],
+	  "item": "global-shadowed"
+	}`)
+	root, err := expandSrc(t, `<document>
+  <constants><const name="label" value="Item"/></constants>
+  <table>
+    <for-each items="${items}" index="i" number="n"><row><cell>${n}/${i} ${label} ${item.name} x${item.qty} ${cur}<for-each items="item.tags" var="tag">[${tag}]</for-each></cell></row></for-each>
+  </table>
+</document>`, d)
+	if err != nil {
+		t.Fatal(err)
+	}
+	table := root.Elements()[1]
+	rows := table.Elements()
+	if len(rows) != 2 {
+		t.Fatalf("got %d rows", len(rows))
+	}
+	want := []string{"1/0 Item A x2 $[x][y]", "2/1 Item B x1.5 $"}
+	for i, r := range rows {
+		if got := r.InnerText(); got != want[i] {
+			t.Errorf("row %d = %q, want %q", i, got, want[i])
+		}
+	}
+}
+
+func TestForEachGoValues(t *testing.T) {
+	d := map[string]any{
+		"rows":  []map[string]any{{"name": "a", "n": 3}, {"name": "b", "n": int64(4)}},
+		"empty": []string{},
+	}
+	root, err := expandSrc(t, `<document><for-each items="rows" var="r"><text>${r.name}${r.n}</text></for-each><for-each items="empty"><text>never</text></for-each></document>`, d)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := root.InnerText(); got != "a3b4" {
+		t.Errorf("got %q", got)
+	}
+}
+
+func TestForEachErrors(t *testing.T) {
+	d := data(t, `{"items": [{"a": 1}], "scalar": "x"}`)
+	cases := map[string]string{
+		`<document><for-each><x/></for-each></document>`:                          "missing items",
+		`<document><for-each items="nope"/></document>`:                           `undefined variable "nope"`,
+		`<document><for-each items="scalar"/></document>`:                         "not an array",
+		`<document><for-each items="items" bogus="1"/></document>`:                `unknown attribute "bogus"`,
+		`<document><for-each items="items" var="a.b"/></document>`:                "invalid var name",
+		`<document><for-each items="items" var="x" index="x"/></document>`:        "used twice",
+		`<document><for-each items="items">${item.missing}</for-each></document>`: `undefined variable "item.missing"`,
+		`<document><for-each items="items">${item}</for-each></document>`:         "not a value",
+		`<for-each items="items"/>`:                                               "root element",
+		"<document>\n\n<for-each items=\"items\">${nope}</for-each></document>":   "line 3",
+	}
+	for src, want := range cases {
+		_, err := expandSrc(t, src, d)
+		if err == nil || !strings.Contains(err.Error(), want) {
+			t.Errorf("%s\n  got %v, want error containing %q", src, err, want)
+		}
+	}
+}

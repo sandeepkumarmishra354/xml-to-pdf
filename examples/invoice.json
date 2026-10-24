@@ -8,8 +8,9 @@
   },
   "items": [
     {"name": "Consulting services", "note": "October 2026, 12 hours", "qty": 12, "price": "150.00", "amount": "1,800.00"},
-    {"name": "Hosting (annual)", "qty": 1, "price": "480.00", "amount": "480.00"},
-    {"name": "Support tickets", "qty": 5, "price": "40.00", "amount": "200.00"}
+    {"name": "Hosting (annual)", "note": "Standard plan", "qty": 1, "price": "480.00", "amount": "480.00"},
+    {"name": "Support tickets", "note": "Priority queue", "qty": 5, "price": "40.00", "amount": "200.00"},
+    {"name": "Domain renewal", "note": "globex.example", "qty": 1, "price": "20.00", "amount": "20.00"}
   ],
-  "total": "2,480.00"
+  "total": "2,500.00"
 }

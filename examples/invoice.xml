@@ -70,24 +70,15 @@
         <cell align="right">Unit price</cell>
         <cell align="right">Amount</cell>
       </row>
-      <row>
-        <cell>${items.0.name}<br/><span style="muted">${items.0.note}</span></cell>
-        <cell style="num">${items.0.qty}</cell>
-        <cell style="num">${currency}${items.0.price}</cell>
-        <cell style="num">${currency}${items.0.amount}</cell>
-      </row>
-      <row>
-        <cell>${items.1.name}</cell>
-        <cell style="num">${items.1.qty}</cell>
-        <cell style="num">${currency}${items.1.price}</cell>
-        <cell style="num">${currency}${items.1.amount}</cell>
-      </row>
-      <row>
-        <cell>${items.2.name}</cell>
-        <cell style="num">${items.2.qty}</cell>
-        <cell style="num">${currency}${items.2.price}</cell>
-        <cell style="num">${currency}${items.2.amount}</cell>
-      </row>
+      <!-- One row per element of the "items" array in invoice.json. -->
+      <for-each items="${items}" var="item">
+        <row>
+          <cell>${item.name}<br/><span style="muted">${item.note}</span></cell>
+          <cell style="num">${item.qty}</cell>
+          <cell style="num">${currency}${item.price}</cell>
+          <cell style="num">${currency}${item.amount}</cell>
+        </row>
+      </for-each>
       <row bold="true">
         <cell colspan="3" align="right">Total</cell>
         <cell style="num">${currency}${total}</cell>

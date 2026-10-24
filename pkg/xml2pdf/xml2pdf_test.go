@@ -46,7 +46,7 @@ func TestExamples(t *testing.T) {
 		want  []string
 	}{
 		{"invoice", Options{Data: data, Vars: map[string]string{"status": "PAID"}}, "1",
-			[]string{"INV-2026-0042", "Globex Ltd.", "$1,800.00", "$2,480.00", "Page 1 of 1"}},
+			[]string{"INV-2026-0042", "Globex Ltd.", "$1,800.00", "Domain renewal", "$2,500.00", "Page 1 of 1"}},
 		{"report", Options{}, "5",
 			[]string{"Quarterly Operations Report", "INC-124", "Page 5 of 5", "Zürich", "€100"}},
 	}

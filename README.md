@@ -4,7 +4,7 @@ Generate PDFs from a declarative XML description. You describe pages, text, imag
 
 - **Single static binary.** It's written in Go with no cgo and no runtime dependencies.
 - **Fast.** A multi-page report renders in about 20 ms.
-- **Templating.** Constants live in the document, and values can be supplied from a JSON file or the command line with `${name}`.
+- **Templating.** Constants live in the document, and values can be supplied from a JSON file or the command line with `${name}`. `<for-each>` repeats content once for each element of a data array.
 
 ```xml
 <document title="Hello" page-size="A4" margin="20mm">
@@ -81,6 +81,39 @@ Variables expand in every attribute and in every piece of text. Constants can re
   <const name="footer">© ${year} ${company}</const>   <!-- value may also be the element text -->
 </constants>
 ```
+
+### Loops: `<for-each>`
+
+`<for-each>` repeats its content once for each element of an array from the data. It's handy for table rows:
+
+```xml
+<table widths="0.5in,4*,1*">
+  <row header="true"><cell>#</cell><cell>Item</cell><cell>Price</cell></row>
+  <for-each items="${items}" var="item" number="n">
+    <row><cell>${n}</cell><cell>${item.name}</cell><cell>${item.price}</cell></row>
+  </for-each>
+</table>
+```
+
+| Attribute | Meaning |
+|---|---|
+| `items` | The array to loop over: a variable path such as `items`, `${items}` or `${order.lines}`. It's required. |
+| `var` | The name for the current element (default `item`). Use `${item}` for a scalar element, or `${item.field}` for one field of an object. |
+| `index` | Optional name for the 0-based position, e.g. `index="i"` gives `${i}`. |
+| `number` | Optional name for the 1-based position, e.g. `number="n"` gives `${n}`. |
+
+Loop variables shadow every other variable with the same name. An empty array produces nothing.
+
+A loop can sit anywhere: around table rows, blocks inside a page, inline text, or whole `<page>` elements (one page per record, for mail-merge). Loops can be nested:
+
+```xml
+<for-each items="orders" var="order">
+  <text style="h2">Order ${order.id}</text>
+  <for-each items="order.lines" var="line"><text>${line.qty} × ${line.sku}</text></for-each>
+</for-each>
+```
+
+When you use the Go library, `Options.Data` can also hold Go slices and maps, such as `[]map[string]any`, not only decoded JSON.
 
 ### Layout
 
@@ -202,10 +235,10 @@ A text or image watermark. You can declare several.
 
 The `pages` attribute on header, footer and watermark is a comma-separated list of `all`, `first`, `last`, `odd`, `even`, `3`, `2-5` or `2-` (page 2 onwards). Page numbers count physical pages in the output.
 
-## Limitations (v1)
+## Limitations
 
 - Only the 14 built-in PDF fonts are available, so text is limited to Windows-1252 (Latin-1 plus €, curly quotes and dashes). Custom TTF fonts with full Unicode are planned.
-- There are no loops or conditionals yet, so table rows can't be generated from a JSON array.
+- There are no conditionals (`<if>`) yet.
 - There are no lines or shapes, lists, links or bookmarks.
 - Table rows taller than a page are not split.
 
