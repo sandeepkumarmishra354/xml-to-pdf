@@ -126,16 +126,19 @@
 </ul>
 
 <h2 id="quick-start">Quick start</h2>
-<p>Download a prebuilt binary for your platform from the <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf/releases/latest">latest release</a> (see <a href="cli.html#install">Install</a>), or build it from source with Go 1.24 or newer:</p>
+<p>Install on Linux or macOS with one command:</p>
+
+<pre><code class="lang-sh">curl -fsSL https://raw.githubusercontent.com/sandeepkumarmishra354/xml-to-pdf/main/install.sh | sh</code></pre>
+<p>On Windows, download the zip from the <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf/releases/latest">latest release</a> (see <a href="cli.html#install">Install</a> for all the options). To build from source instead, you need Go 1.24 or newer:</p>
 
 <pre><code class="lang-sh">git clone https://github.com/sandeepkumarmishra354/xml-to-pdf
 cd xml-to-pdf
 make build                      # produces bin/xml2pdf</code></pre>
-<p>Render a document:</p>
+<p>Render a document. The examples are in the <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf/tree/main/examples">repository</a> and inside every release archive; if you built from source, use <code>bin/xml2pdf</code>:</p>
 
-<pre><code class="lang-sh">bin/xml2pdf examples/hello.xml                       # writes examples/hello.pdf
-bin/xml2pdf examples/hello.xml --set name=Alice      # override a variable
-bin/xml2pdf examples/invoice.xml --data examples/invoice.json -o invoice.pdf</code></pre>
+<pre><code class="lang-sh">xml2pdf examples/hello.xml                           # writes examples/hello.pdf
+xml2pdf examples/hello.xml --set name=Alice          # override a variable
+xml2pdf examples/invoice.xml --data examples/invoice.json -o invoice.pdf</code></pre>
 <p>Every document has a <code>&lt;document&gt;</code> root with one or more <code>&lt;page&gt;</code> elements. Everything else is optional. The <a href="guide.html">guide</a> explains how it all fits together, and the <a href="reference.html">element reference</a> lists every tag and attribute.</p>
 
 <h2 id="next">Where to next</h2>

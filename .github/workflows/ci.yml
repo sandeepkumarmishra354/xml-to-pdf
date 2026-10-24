@@ -72,3 +72,25 @@ jobs:
         with:
           version: "~> v2"
           args: check
+
+  install-script:
+    name: Install script (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - name: shellcheck
+        if: runner.os == 'Linux'
+        run: shellcheck install.sh
+      - name: Install the latest release with install.sh
+        env:
+          XML2PDF_INSTALL_DIR: ${{ runner.temp }}/bin
+        run: sh install.sh
+      - name: Run the installed binary
+        run: |
+          "$RUNNER_TEMP/bin/xml2pdf" --version | grep -E '^xml2pdf [0-9]+\.[0-9]+\.[0-9]+'
+          "$RUNNER_TEMP/bin/xml2pdf" examples/hello.xml -o "$RUNNER_TEMP/hello.pdf"
+          test -s "$RUNNER_TEMP/hello.pdf"

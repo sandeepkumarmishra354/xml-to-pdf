@@ -24,7 +24,15 @@ Generate PDFs from a declarative XML description. You describe pages, text, imag
 
 ## Install
 
-**Download a binary** for Linux, macOS or Windows from the [latest release](https://github.com/sandeepkumarmishra354/xml-to-pdf/releases/latest), unpack it, and put `xml2pdf` on your `PATH`. Nothing else is needed.
+**Linux and macOS** (one line):
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/sandeepkumarmishra354/xml-to-pdf/main/install.sh | sh
+```
+
+The script downloads the right binary for your system from the latest release, verifies its SHA-256 checksum, and installs it to `/usr/local/bin`. If that directory isn't writable, it uses `sudo` or falls back to `~/.local/bin`. Set `XML2PDF_VERSION=0.1.0` to pin a version, or `XML2PDF_INSTALL_DIR=~/bin` to choose the directory. Installing this way also avoids the macOS "could not verify" warning, because macOS only flags files downloaded through a browser.
+
+**Windows, or manual download:** get the archive for your platform from the [latest release](https://github.com/sandeepkumarmishra354/xml-to-pdf/releases/latest), unpack it, and put `xml2pdf` on your `PATH`. On macOS, a binary downloaded through a browser is blocked the first time it runs; clear the flag with `xattr -d com.apple.quarantine xml2pdf`.
 
 **With Go** (1.24+):
 

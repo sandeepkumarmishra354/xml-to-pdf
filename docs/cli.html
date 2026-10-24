@@ -80,6 +80,19 @@
 <p class="lead">The <code>xml2pdf</code> binary renders one XML file to one PDF. It's a single static executable with no runtime dependencies.</p>
 
 <h2 id="install">Install</h2>
+<h3 id="install-script">Install script (Linux &amp; macOS)</h3>
+
+<pre><code class="lang-sh">curl -fsSL https://raw.githubusercontent.com/sandeepkumarmishra354/xml-to-pdf/main/install.sh | sh</code></pre>
+<p>The <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf/blob/main/install.sh">script</a> works out your OS and CPU, downloads the matching archive from the latest release, verifies its SHA-256 checksum against <code>checksums.txt</code>, and installs <code>xml2pdf</code> to <code>/usr/local/bin</code>. If that directory isn't writable, it uses <code>sudo</code> or falls back to <code>~/.local/bin</code>. It needs <code>curl</code> or <code>wget</code>.</p>
+<div class="table-wrap"><table>
+<tr><th>Variable</th><th>Description</th></tr>
+<tr><td><code>XML2PDF_VERSION</code></td><td>Version to install, e.g. <code>0.1.0</code>. The default is the latest release.</td></tr>
+<tr><td><code>XML2PDF_INSTALL_DIR</code></td><td>Directory to install into, e.g. <code>~/bin</code>.</td></tr>
+</table></div>
+
+<pre><code class="lang-sh">curl -fsSL https://raw.githubusercontent.com/sandeepkumarmishra354/xml-to-pdf/main/install.sh | XML2PDF_VERSION=0.1.0 XML2PDF_INSTALL_DIR="$HOME/bin" sh</code></pre>
+<p>Binaries installed this way aren't blocked by macOS Gatekeeper, because only files downloaded through a web browser are flagged.</p>
+
 <h3 id="download">Download a binary</h3>
 <p>Prebuilt binaries for Linux, macOS and Windows (amd64 and arm64) are attached to every <a href="https://github.com/sandeepkumarmishra354/xml-to-pdf/releases/latest">GitHub release</a>. Download the archive for your platform, unpack it, and put <code>xml2pdf</code> somewhere on your <code>PATH</code>:</p>
 
@@ -89,7 +102,7 @@ tar xzf xml2pdf_VERSION_linux_amd64.tar.gz
 sudo mv xml2pdf /usr/local/bin/
 xml2pdf --version</code></pre>
 <p>Each archive also contains the README, the license and the example documents. <code>checksums.txt</code> in the release lists the SHA-256 of every archive.</p>
-<div class="note"><p><strong>macOS:</strong> the binaries aren't notarized. If macOS blocks the first run, allow it under System Settings → Privacy &amp; Security, or run <code>xattr -d com.apple.quarantine xml2pdf</code>.</p></div>
+<div class="note"><p><strong>macOS:</strong> the binaries aren't notarized, so a binary downloaded through a browser shows "Apple could not verify xml2pdf…" the first time it runs. Use the <a href="#install-script">install script</a> instead, or clear the flag with <code>xattr -d com.apple.quarantine xml2pdf</code>, or allow it under System Settings → Privacy &amp; Security.</p></div>
 
 <h3 id="go-install">With Go</h3>
 
