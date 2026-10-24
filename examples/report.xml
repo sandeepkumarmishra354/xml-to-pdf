@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  A multi-page report showing automatic page breaks, tables that continue
+  across pages with a repeated header row, page-specific headers/footers,
+  an image watermark and per-page size/orientation overrides.
+
+  Render with:  xml2pdf examples/report.xml
+-->
+<document title="${title}" author="${team}" page-size="Letter" margin="0.75in" font="times" size="11">
+
+  <constants>
+    <const name="title" value="Quarterly Operations Report"/>
+    <const name="team" value="Platform Team"/>
+    <const name="quarter" value="Q3 2026"/>
+    <const name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</const>
+  </constants>
+
+  <resources>
+    <image id="logo" src="logo.png"/>
+    <style id="sans" font="helvetica"/>
+    <style id="title" extends="sans" size="28" bold="true" color="#1f4e9c" align="center"/>
+    <style id="subtitle" extends="sans" size="14" color="#555" align="center"/>
+    <style id="h1" extends="sans" size="16" bold="true" color="#1f4e9c" margin-top="18" margin-bottom="8"/>
+    <style id="body" align="justify" margin-bottom="8" line-height="1.35"/>
+    <style id="small" extends="sans" size="8" color="#777"/>
+  </resources>
+
+  <!-- Faint logo behind content on every page except the cover. -->
+  <watermark image="logo" width="60%" opacity="0.06" rotate="30" layer="back" pages="2-"/>
+  <watermark text="CONFIDENTIAL" size="12" rotate="0" opacity="0.6" color="red" y="15pt" pages="all"/>
+
+  <header pages="2-">
+    <table widths="1*,1*" border="0" padding="0 0 4 0">
+      <row style="small">
+        <cell>${title}</cell>
+        <cell align="right">${quarter}</cell>
+      </row>
+    </table>
+  </header>
+
+  <footer>
+    <text style="small" align="center">${team} · Page {page} of {pages}</text>
+  </footer>
+
+  <!-- Cover page: no header, centered content. -->
+  <page header="false">
+    <spacer height="2in"/>
+    <img ref="logo" width="2.5in" align="center"/>
+    <spacer height="0.5in"/>
+    <text style="title">${title}</text>
+    <text style="subtitle" margin-top="8">${quarter} · Prepared by ${team}</text>
+  </page>
+
+  <page>
+    <text style="h1">1. Summary</text>
+    <text style="body">${lorem}</text>
+    <text style="body">The platform served <b>99.98%</b> of requests within SLO this quarter.
+      Notable changes include the migration to the new storage tier, a <i>40%</i> reduction
+      in cold-start latency, and the retirement of three legacy services. ${lorem}</text>
+
+    <text style="h1">2. Incident log</text>
+    <text style="body">The table below continues across pages; its header row repeats automatically.</text>
+    <table widths="0.8in,1*,3*,0.9in" header-bg="#1f4e9c" stripe="#eef2f9" border="0.4" border-color="#9aa" size="10">
+      <row header="true" color="white" font="helvetica"><cell>ID</cell><cell>Service</cell><cell>Description</cell><cell align="right">Minutes</cell></row>
+      <row><cell>INC-101</cell><cell>api-gateway</cell><cell>Elevated 5xx after config push; rolled back.</cell><cell align="right">14</cell></row>
+      <row><cell>INC-102</cell><cell>auth</cell><cell>Token refresh latency spike during key rotation.</cell><cell align="right">22</cell></row>
+      <row><cell>INC-103</cell><cell>storage</cell><cell>Replica lag on shard 7 caused stale reads for a subset of tenants.</cell><cell align="right">41</cell></row>
+      <row><cell>INC-104</cell><cell>billing</cell><cell>Duplicate invoice emails sent to 312 customers.</cell><cell align="right">9</cell></row>
+      <row><cell>INC-105</cell><cell>search</cell><cell>Index rebuild exceeded memory limits; restarted with larger nodes.</cell><cell align="right">63</cell></row>
+      <row><cell>INC-106</cell><cell>api-gateway</cell><cell>TLS certificate renewal failed in one region.</cell><cell align="right">17</cell></row>
+      <row><cell>INC-107</cell><cell>queue</cell><cell>Consumer group rebalancing storm after deploy.</cell><cell align="right">28</cell></row>
+      <row><cell>INC-108</cell><cell>storage</cell><cell>Disk pressure on two nodes; data rebalanced.</cell><cell align="right">12</cell></row>
+      <row><cell>INC-109</cell><cell>auth</cell><cell>SSO provider outage (upstream).</cell><cell align="right">55</cell></row>
+      <row><cell>INC-110</cell><cell>web</cell><cell>CDN misconfiguration served stale assets.</cell><cell align="right">19</cell></row>
+      <row><cell>INC-111</cell><cell>search</cell><cell>Query timeouts for wildcard searches.</cell><cell align="right">33</cell></row>
+      <row><cell>INC-112</cell><cell>billing</cell><cell>Tax calculation off by one cent for EU invoices.</cell><cell align="right">7</cell></row>
+      <row><cell>INC-113</cell><cell>queue</cell><cell>Dead-letter queue filled after schema change.</cell><cell align="right">26</cell></row>
+      <row><cell>INC-114</cell><cell>api-gateway</cell><cell>Rate limiter misapplied to internal traffic.</cell><cell align="right">11</cell></row>
+      <row><cell>INC-115</cell><cell>storage</cell><cell>Snapshot job overlapped with compaction.</cell><cell align="right">38</cell></row>
+      <row><cell>INC-116</cell><cell>web</cell><cell>Login page broken in one browser after CSS update.</cell><cell align="right">15</cell></row>
+      <row><cell>INC-117</cell><cell>auth</cell><cell>MFA SMS delivery delays in APAC.</cell><cell align="right">47</cell></row>
+      <row><cell>INC-118</cell><cell>search</cell><cell>Relevance regression after model update.</cell><cell align="right">0</cell></row>
+      <row><cell>INC-119</cell><cell>queue</cell><cell>Producer retries amplified a brief network partition.</cell><cell align="right">21</cell></row>
+      <row><cell>INC-120</cell><cell>billing</cell><cell>Webhook signature verification failed for one partner.</cell><cell align="right">13</cell></row>
+      <row><cell>INC-121</cell><cell>storage</cell><cell>Object listing pagination returned duplicates.</cell><cell align="right">18</cell></row>
+      <row><cell>INC-122</cell><cell>web</cell><cell>Dashboard charts failed to load for large accounts.</cell><cell align="right">24</cell></row>
+      <row><cell>INC-123</cell><cell>api-gateway</cell><cell>Request body size limit regression.</cell><cell align="right">16</cell></row>
+      <row><cell>INC-124</cell><cell>auth</cell><cell>Session cookies not cleared on logout in one flow.</cell><cell align="right">5</cell></row>
+      <row bold="true"><cell colspan="3" align="right">Total</cell><cell align="right">551</cell></row>
+    </table>
+
+    <text style="h1">3. Outlook</text>
+    <text style="body">${lorem}</text>
+    <text style="body">${lorem}</text>
+    <page-break/>
+    <text style="h1">4. Appendix</text>
+    <text style="body">Words that are too long for a line are broken at character boundaries:
+      SupercalifragilisticexpialidociousSupercalifragilisticexpialidociousSupercalifragilisticexpialidociousSupercalifragilisticexpialidocious.</text>
+    <text style="body">Unicode text in the Latin-1 range works with the built-in fonts: café, naïve, Zürich, €100, “quotes” — dashes.</text>
+  </page>
+
+  <!-- A landscape page with its own margin. -->
+  <page orientation="landscape" margin="0.5in">
+    <text style="h1">5. Capacity overview (landscape)</text>
+    <table widths="2*,1*,1*,1*,1*,1*,1*" header-bg="#ddd" size="10" font="helvetica">
+      <row header="true"><cell>Region</cell><cell align="right">Jan</cell><cell align="right">Feb</cell><cell align="right">Mar</cell><cell align="right">Apr</cell><cell align="right">May</cell><cell align="right">Jun</cell></row>
+      <row><cell>us-east</cell><cell align="right">71%</cell><cell align="right">74%</cell><cell align="right">78%</cell><cell align="right">80%</cell><cell align="right">77%</cell><cell align="right">82%</cell></row>
+      <row><cell>eu-west</cell><cell align="right">55%</cell><cell align="right">58%</cell><cell align="right">61%</cell><cell align="right">60%</cell><cell align="right">63%</cell><cell align="right">66%</cell></row>
+      <row><cell valign="middle">ap-south<br/><span style="small">new region</span></cell><cell align="right" valign="middle">12%</cell><cell align="right" valign="middle">19%</cell><cell align="right" valign="middle">25%</cell><cell align="right" valign="middle">31%</cell><cell align="right" valign="middle">36%</cell><cell align="right" valign="middle">40%</cell></row>
+    </table>
+  </page>
+</document>

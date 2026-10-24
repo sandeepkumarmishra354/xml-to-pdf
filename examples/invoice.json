@@ -1,0 +1,15 @@
+{
+  "invoice_no": "INV-2026-0042",
+  "date": "2026-10-24",
+  "due_date": "2026-11-23",
+  "customer": {
+    "name": "Globex Ltd.",
+    "address": "742 Evergreen Terrace, Shelbyville"
+  },
+  "items": [
+    {"name": "Consulting services", "note": "October 2026, 12 hours", "qty": 12, "price": "150.00", "amount": "1,800.00"},
+    {"name": "Hosting (annual)", "qty": 1, "price": "480.00", "amount": "480.00"},
+    {"name": "Support tickets", "qty": 5, "price": "40.00", "amount": "200.00"}
+  ],
+  "total": "2,480.00"
+}

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Render with:
+    xml2pdf examples/invoice.xml -data examples/invoice.json -o invoice.pdf
+  Override any value from the command line:
+    xml2pdf examples/invoice.xml -data examples/invoice.json -set status=PAID
+  (XML comments may not contain a double dash, hence the single-dash flags.)
+-->
+<document title="Invoice ${invoice_no}" author="${company}"
+          page-size="A4" margin="20mm" font="helvetica" size="10" color="#222">
+
+  <constants>
+    <const name="company" value="Acme Corp"/>
+    <const name="company_address" value="12 Industrial Way, Springfield"/>
+    <const name="currency" value="$"/>
+    <const name="status" value="DRAFT"/>
+    <const name="brand" value="#1f4e9c"/>
+  </constants>
+
+  <resources>
+    <image id="logo" src="logo.png"/>
+    <style id="muted" color="#777" size="9"/>
+    <style id="h1" size="22" bold="true" color="${brand}"/>
+    <style id="h2" size="12" bold="true" color="${brand}" margin-top="14" margin-bottom="6"/>
+    <style id="num" align="right"/>
+  </resources>
+
+  <watermark text="${status}" opacity="0.12" rotate="45" size="110" color="${brand}"/>
+
+  <header pages="2-">
+    <text style="muted" align="right">${company} · Invoice ${invoice_no}</text>
+  </header>
+
+  <footer>
+    <text style="muted" align="center">Page {page} of {pages}</text>
+  </footer>
+
+  <page>
+    <img ref="logo" width="45mm"/>
+    <!-- Absolutely positioned block in the top right corner. -->
+    <text x="120mm" y="20mm" width="70mm" align="right" style="h1">INVOICE</text>
+    <text x="120mm" y="30mm" width="70mm" align="right">
+      No. <b>${invoice_no}</b><br/>
+      Date: ${date}<br/>
+      Due: ${due_date}
+    </text>
+
+    <spacer height="10"/>
+    <table widths="1*,1*" border="0" padding="0">
+      <row>
+        <cell>
+          <text style="muted">FROM</text>
+          <text bold="true">${company}</text>
+          <text>${company_address}</text>
+        </cell>
+        <cell>
+          <text style="muted">BILL TO</text>
+          <text bold="true">${customer.name}</text>
+          <text>${customer.address}</text>
+        </cell>
+      </row>
+    </table>
+
+    <text style="h2">Items</text>
+    <table widths="4*,1*,1.5*,1.5*" border="0.5" border-color="#bbb" padding="5 6"
+           header-bg="${brand}" stripe="#f2f5fa">
+      <row header="true" color="white">
+        <cell>Description</cell>
+        <cell align="right">Qty</cell>
+        <cell align="right">Unit price</cell>
+        <cell align="right">Amount</cell>
+      </row>
+      <row>
+        <cell>${items.0.name}<br/><span style="muted">${items.0.note}</span></cell>
+        <cell style="num">${items.0.qty}</cell>
+        <cell style="num">${currency}${items.0.price}</cell>
+        <cell style="num">${currency}${items.0.amount}</cell>
+      </row>
+      <row>
+        <cell>${items.1.name}</cell>
+        <cell style="num">${items.1.qty}</cell>
+        <cell style="num">${currency}${items.1.price}</cell>
+        <cell style="num">${currency}${items.1.amount}</cell>
+      </row>
+      <row>
+        <cell>${items.2.name}</cell>
+        <cell style="num">${items.2.qty}</cell>
+        <cell style="num">${currency}${items.2.price}</cell>
+        <cell style="num">${currency}${items.2.amount}</cell>
+      </row>
+      <row bold="true">
+        <cell colspan="3" align="right">Total</cell>
+        <cell style="num">${currency}${total}</cell>
+      </row>
+    </table>
+
+    <text style="h2">Notes</text>
+    <text align="justify">
+      Thank you for your business. Payment is due within <b>30 days</b> of the invoice date.
+      Please include the invoice number <i>${invoice_no}</i> with your payment. Late payments
+      may be subject to a fee of <u>1.5% per month</u>.
+    </text>
+  </page>
+</document>
