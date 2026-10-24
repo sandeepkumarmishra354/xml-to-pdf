@@ -11,7 +11,7 @@ Generate PDFs from a declarative XML description. You describe pages, text, imag
 - **Fast.** A multi-page report renders in about 20 ms.
 - **Templating.** Constants live in the document, and values can be supplied from a JSON file or the command line with `${name}`. `<for-each>` repeats content once for each element of a data array.
 
-**Documentation:** https://sandeepkumarmishra354.github.io/xml-to-pdf/ (sources in `docs-src/`, rebuilt with `make docs`)
+**Documentation:** https://sandeepkumarmishra354.github.io/xml-to-pdf/ · **Try it in your browser:** [Playground](https://sandeepkumarmishra354.github.io/xml-to-pdf/playground/) (sources in `docs-src/`, rebuilt with `make docs`)
 
 ```xml
 <document title="Hello" page-size="A4" margin="20mm">

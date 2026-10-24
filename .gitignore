@@ -2,3 +2,8 @@ bin/
 dist/
 *.pdf
 !docs/assets/*.pdf
+
+# Playground build outputs (made by `make playground` / the Pages workflow)
+docs/playground/xml2pdf.wasm
+docs/playground/wasm_exec.js
+docs/playground/examples/

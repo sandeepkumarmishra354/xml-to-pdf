@@ -1,0 +1,17 @@
+{
+  "shop": "Corner Books",
+  "orders": [
+    {"id": "A-1001", "customer": "Ada", "lines": [
+      {"sku": "The Pragmatic Programmer", "qty": 1, "price": "39.99"},
+      {"sku": "Bookmark", "qty": 3, "price": "1.50"}
+    ]},
+    {"id": "A-1002", "customer": "Linus", "lines": [
+      {"sku": "Structure and Interpretation of Computer Programs", "qty": 1, "price": "54.00"}
+    ]},
+    {"id": "A-1003", "customer": "Grace", "lines": [
+      {"sku": "Clean Code", "qty": 2, "price": "32.50"},
+      {"sku": "Coffee mug", "qty": 1, "price": "12.00"},
+      {"sku": "Sticker pack", "qty": 4, "price": "3.00"}
+    ]}
+  ]
+}

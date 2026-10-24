@@ -11,6 +11,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"time"
@@ -33,6 +34,10 @@ type Options struct {
 	Vars map[string]string
 	// CreationDate is written to the PDF metadata; zero means now.
 	CreationDate time.Time
+	// FS, when set, is where image files are read from instead of the OS
+	// filesystem, e.g. an embed.FS or fstest.MapFS. Image paths in the
+	// document are then slash-separated and relative to BaseDir inside FS.
+	FS fs.FS
 }
 
 // Render reads an XML document from r and writes the PDF to w.
@@ -52,11 +57,11 @@ func Render(r io.Reader, w io.Writer, opts Options) error {
 	if base == "" {
 		base = "."
 	}
-	doc, err := model.Build(root, base)
+	doc, err := model.Build(root, base, opts.FS)
 	if err != nil {
 		return err
 	}
-	return render.Render(doc, w, render.Options{CreationDate: opts.CreationDate})
+	return render.Render(doc, w, render.Options{CreationDate: opts.CreationDate, FS: opts.FS})
 }
 
 // RenderFile renders the XML file at in to the PDF file at out. The output

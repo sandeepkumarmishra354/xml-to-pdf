@@ -14,7 +14,7 @@ func build(t *testing.T, src string) (*Document, error) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	return Build(root, "testdata")
+	return Build(root, "testdata", nil)
 }
 
 func TestResolveColWidths(t *testing.T) {

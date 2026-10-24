@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Loops: one section per order, one table row per line item.
+  Render with:  xml2pdf examples/loop.xml -data examples/loop.json
+-->
+<document title="Orders" page-size="A5" margin="15mm" size="10">
+  <resources>
+    <style id="h" size="14" bold="true" color="#1f4e9c" margin-top="10" margin-bottom="4"/>
+    <style id="muted" size="8" color="gray"/>
+  </resources>
+  <footer><text style="muted" align="center">Page {page} of {pages}</text></footer>
+
+  <page>
+    <text size="20" bold="true">Orders for ${shop}</text>
+    <for-each items="${orders}" var="order" number="n">
+      <text style="h">${n}. Order ${order.id} · ${order.customer}</text>
+      <table widths="3*,1*,1*" header-bg="#eef2f9" stripe="#f7f9fc" border="0.4" border-color="#ccc">
+        <row header="true"><cell>Item</cell><cell align="right">Qty</cell><cell align="right">Price</cell></row>
+        <for-each items="order.lines" var="line">
+          <row><cell>${line.sku}</cell><cell align="right">${line.qty}</cell><cell align="right">${line.price}</cell></row>
+        </for-each>
+      </table>
+    </for-each>
+  </page>
+</document>

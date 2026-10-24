@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>xml2pdf Playground</title>
+<meta name="description" content="Try xml2pdf in your browser: edit XML and JSON and see the PDF update live. Rendered by the real Go engine compiled to WebAssembly.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e9c'/%3E%3Ctext x='16' y='21' font-size='13' text-anchor='middle' fill='white' font-family='monospace'%3E%3C/%3E%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="playground.css">
+<script src="../assets/site.js"></script>
+<script src="wasm_exec.js"></script>
+<script type="module" src="playground.js"></script>
+</head>
+<body class="pg">
+<header class="topbar">
+  <a class="brand" href="../index.html"><span class="logo">&lt;/&gt;</span>xml2pdf</a>
+  <span class="pg-title">Playground</span>
+  <span class="spacer"></span>
+  <a class="gh" href="../guide.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg><span class="txt">Docs</span></a>
+  <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
+</header>
+
+<div class="pg-toolbar">
+  <label class="pg-field">
+    <span>Example</span>
+    <select id="example">
+      <option value="">Choose…</option>
+      <option value="hello">Hello world</option>
+      <option value="invoice">Invoice (JSON data)</option>
+      <option value="loop">Orders (loops)</option>
+      <option value="report">Multi-page report</option>
+    </select>
+  </label>
+  <span class="spacer"></span>
+  <button class="pg-btn" id="render" type="button" title="Render now (Ctrl/Cmd+Enter)">Render</button>
+  <button class="pg-btn" id="share" type="button" title="Copy a link to this document">Share</button>
+  <button class="pg-btn primary" id="download" type="button" disabled>Download PDF</button>
+</div>
+
+<main class="pg-main">
+  <section class="pg-pane pg-editor" aria-label="Editor">
+    <div class="pg-tabs" role="tablist">
+      <button role="tab" id="tab-xml" aria-controls="panel-xml" aria-selected="true">XML</button>
+      <button role="tab" id="tab-json" aria-controls="panel-json" aria-selected="false">Data (JSON)</button>
+      <button role="tab" id="tab-files" aria-controls="panel-files" aria-selected="false">Images <span class="count" id="files-count"></span></button>
+    </div>
+    <div class="pg-panel" id="panel-xml" role="tabpanel" aria-labelledby="tab-xml">
+      <div class="pg-code">
+        <pre class="pg-gutter" aria-hidden="true"></pre>
+        <textarea id="xml" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off" aria-label="XML document"></textarea>
+      </div>
+    </div>
+    <div class="pg-panel" id="panel-json" role="tabpanel" aria-labelledby="tab-json" hidden>
+      <div class="pg-code">
+        <pre class="pg-gutter" aria-hidden="true"></pre>
+        <textarea id="json" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off" aria-label="JSON data" placeholder='{ "name": "World" }'></textarea>
+      </div>
+    </div>
+    <div class="pg-panel pg-files" id="panel-files" role="tabpanel" aria-labelledby="tab-files" hidden>
+      <p>Images available to the document. Reference them by file name, e.g. <code>&lt;img src="photo.png"/&gt;</code> or <code>&lt;image id="logo" src="logo.png"/&gt;</code>.</p>
+      <ul id="files"></ul>
+      <label class="pg-btn pg-upload">Add images…<input id="upload" type="file" accept=".png,.jpg,.jpeg,.gif,image/png,image/jpeg,image/gif" multiple hidden></label>
+      <p class="pg-hint">Images stay in your browser and aren't included in share links.</p>
+    </div>
+  </section>
+
+  <section class="pg-pane pg-preview" aria-label="Preview">
+    <div class="pg-status" id="status" role="status">Loading the renderer…</div>
+    <div class="pg-error" id="error" hidden>
+      <strong>Error</strong>
+      <span id="error-msg"></span>
+      <button type="button" id="error-line" hidden></button>
+    </div>
+    <div class="pg-pages" id="pages"></div>
+  </section>
+</main>
+<div class="pg-toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

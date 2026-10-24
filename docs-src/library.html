@@ -66,6 +66,10 @@ type Options struct {
 	Vars map[string]string
 	// CreationDate is written to the PDF metadata; zero means now.
 	CreationDate time.Time
+	// FS, when set, is where image files are read from instead of the OS
+	// filesystem, e.g. an embed.FS or fstest.MapFS. Image paths in the
+	// document are then slash-separated and relative to BaseDir inside FS.
+	FS fs.FS
 }
 ```
 <p><code>Data</code> can hold decoded JSON (<code>map[string]any</code>, <code>[]any</code>) as well as ordinary Go maps with string keys and slices, such as <code>[]map[string]any</code> or <code>map[string]string</code>. Scalars can be strings, booleans, any integer or float type, <code>json.Number</code>, or anything implementing <code>fmt.Stringer</code>. Struct fields aren't read; convert structs to maps, or marshal them to JSON and use <code>LoadData</code>.</p>
@@ -125,6 +129,27 @@ func invoiceHandler(w http.ResponseWriter, r *http.Request) {
 
 ```go
 opts := xml2pdf.Options{CreationDate: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)}
+```
+
+<h3 id="example-embed">Templates and images from <code>embed.FS</code></h3>
+<p>Ship templates and their images inside your binary. Set <code>Options.FS</code>, and image paths in the document are read from it:</p>
+
+```go
+//go:embed templates
+var templates embed.FS
+
+func renderInvoice(w io.Writer, data map[string]any) error {
+	src, err := templates.Open("templates/invoice.xml")
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+	return xml2pdf.Render(src, w, xml2pdf.Options{
+		FS:      templates,
+		BaseDir: "templates", // <img src="logo.png"/> reads templates/logo.png
+		Data:    data,
+	})
+}
 ```
 
 <h2 id="concurrency">Concurrency</h2>

@@ -14,6 +14,7 @@
   <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="Toggle navigation"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
   <a class="brand" href="index.html"><span class="logo">&lt;/&gt;</span>xml2pdf</a>
   <span class="spacer"></span>
+  <a class="gh try" href="playground/"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg><span class="txt">Playground</span></a>
   <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
   <a class="gh" href="https://github.com/sandeepkumarmishra354/xml-to-pdf"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg><span class="txt">Source</span></a>
 </header>
@@ -27,6 +28,7 @@
 </li>
 <li><a href="library.html">Go library</a>
 </li>
+<li><a href="playground/">Playground &#8599;</a></li>
 </ul>
 <h4>Writing documents</h4>
 <ul>
@@ -124,6 +126,10 @@ opts := xml2pdf.Options{Data: xml2pdf.MergeData(defaults, order)}</code></pre>
 	Vars map[string]string
 	// CreationDate is written to the PDF metadata; zero means now.
 	CreationDate time.Time
+	// FS, when set, is where image files are read from instead of the OS
+	// filesystem, e.g. an embed.FS or fstest.MapFS. Image paths in the
+	// document are then slash-separated and relative to BaseDir inside FS.
+	FS fs.FS
 }</code></pre>
 <p><code>Data</code> can hold decoded JSON (<code>map[string]any</code>, <code>[]any</code>) as well as ordinary Go maps with string keys and slices, such as <code>[]map[string]any</code> or <code>map[string]string</code>. Scalars can be strings, booleans, any integer or float type, <code>json.Number</code>, or anything implementing <code>fmt.Stringer</code>. Struct fields aren't read; convert structs to maps, or marshal them to JSON and use <code>LoadData</code>.</p>
 
@@ -176,6 +182,24 @@ func invoiceHandler(w http.ResponseWriter, r *http.Request) {
 <p>PDFs record their creation time. Fix it to get byte-identical output for the same input, which is useful for tests and caching:</p>
 
 <pre><code class="lang-go">opts := xml2pdf.Options{CreationDate: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)}</code></pre>
+<h3 id="example-embed">Templates and images from <code>embed.FS</code></h3>
+<p>Ship templates and their images inside your binary. Set <code>Options.FS</code>, and image paths in the document are read from it:</p>
+
+<pre><code class="lang-go">//go:embed templates
+var templates embed.FS
+
+func renderInvoice(w io.Writer, data map[string]any) error {
+	src, err := templates.Open("templates/invoice.xml")
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+	return xml2pdf.Render(src, w, xml2pdf.Options{
+		FS:      templates,
+		BaseDir: "templates", // &lt;img src="logo.png"/&gt; reads templates/logo.png
+		Data:    data,
+	})
+}</code></pre>
 <h2 id="concurrency">Concurrency</h2>
 <p>Each call to <code>Render</code> or <code>RenderFile</code> is independent and shares no mutable state, so you can call them from many goroutines at once.</p>
 

@@ -3,7 +3,7 @@ VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 LDFLAGS := -s -w -X main.version=$(VERSION)
 PLATFORMS := linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 windows/arm64
 
-.PHONY: build test vet examples docs dist snapshot clean
+.PHONY: build test vet examples docs playground dist snapshot clean
 
 build:
 	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/$(BINARY) ./cmd/xml2pdf
@@ -29,6 +29,16 @@ docs: build
 	else echo "pdftoppm not found: skipping PNG previews"; fi
 	python3 docs-src/build.py
 
+# Build the browser playground (docs/playground/) from the WebAssembly target.
+# Outputs are gitignored; the Pages workflow builds them on deploy.
+# Preview locally with: python3 -m http.server -d docs
+PLAYGROUND := docs/playground
+playground:
+	GOOS=js GOARCH=wasm go build -trimpath -ldflags "$(LDFLAGS)" -o $(PLAYGROUND)/xml2pdf.wasm ./cmd/xml2pdf-wasm
+	cp "$$(go env GOROOT)/lib/wasm/wasm_exec.js" $(PLAYGROUND)/
+	mkdir -p $(PLAYGROUND)/examples
+	cp examples/hello.xml examples/invoice.xml examples/invoice.json examples/loop.xml examples/loop.json examples/report.xml examples/logo.png $(PLAYGROUND)/examples/
+
 # Cross-compile static binaries for every platform into dist/.
 dist:
 	@for p in $(PLATFORMS); do \
@@ -43,4 +53,4 @@ snapshot:
 	goreleaser release --snapshot --clean
 
 clean:
-	rm -rf bin dist
+	rm -rf bin dist $(PLAYGROUND)/xml2pdf.wasm $(PLAYGROUND)/wasm_exec.js $(PLAYGROUND)/examples

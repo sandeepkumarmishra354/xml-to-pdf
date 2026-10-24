@@ -133,6 +133,7 @@ td :not(pre) > code, td > code { overflow-wrap: normal; }
   cursor: pointer;
 }
 .topbar a.gh:hover, .icon-btn:hover { color: var(--fg); text-decoration: none; }
+.topbar a.try { color: var(--accent); border-color: var(--accent); }
 .menu-btn { display: none; }
 
 /* ---------- layout ---------- */

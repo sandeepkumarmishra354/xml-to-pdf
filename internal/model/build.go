@@ -2,7 +2,9 @@ package model
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -28,14 +30,16 @@ const DefaultMargin = 36.0
 var inlineTags = map[string]bool{"b": true, "strong": true, "i": true, "em": true, "u": true, "span": true, "br": true}
 
 // Build converts a parsed (and variable-expanded) tree into a Document.
-// Relative file paths are resolved against baseDir.
-func Build(root *parser.Node, baseDir string) (*Document, error) {
-	b := &builder{baseDir: baseDir}
+// Relative file paths are resolved against baseDir. When fsys is non-nil,
+// image paths refer to files inside fsys instead of the OS filesystem.
+func Build(root *parser.Node, baseDir string, fsys fs.FS) (*Document, error) {
+	b := &builder{baseDir: baseDir, fsys: fsys}
 	return b.document(root)
 }
 
 type builder struct {
 	baseDir string
+	fsys    fs.FS
 	doc     *Document
 	// Default page geometry before orientation, used by <page> overrides.
 	baseSize    Size
@@ -146,6 +150,20 @@ func (a *attrs) done() error {
 }
 
 func (b *builder) path(a *attrs, p string) (string, error) {
+	if b.fsys != nil {
+		p = strings.ReplaceAll(p, "\\", "/")
+		if strings.HasPrefix(p, "/") {
+			return "", a.errf("image path must be relative: %s", p)
+		}
+		full := path.Join(strings.ReplaceAll(b.baseDir, "\\", "/"), p)
+		if !fs.ValidPath(full) {
+			return "", a.errf("invalid image path: %s", p)
+		}
+		if _, err := fs.Stat(b.fsys, full); err != nil {
+			return "", a.errf("image not found: %s", p)
+		}
+		return full, nil
+	}
 	if !filepath.IsAbs(p) {
 		p = filepath.Join(b.baseDir, p)
 	}

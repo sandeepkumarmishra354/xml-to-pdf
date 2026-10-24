@@ -4,6 +4,9 @@ package render
 import (
 	"fmt"
 	"io"
+	"io/fs"
+	"path"
+	"strings"
 	"time"
 
 	"github.com/go-pdf/fpdf"
@@ -16,6 +19,8 @@ import (
 type Options struct {
 	// CreationDate is stored in the PDF metadata; zero means now.
 	CreationDate time.Time
+	// FS, when set, holds the image files referenced by the document.
+	FS fs.FS
 }
 
 type measurer struct {
@@ -58,6 +63,12 @@ func Render(doc *model.Document, w io.Writer, opts Options) error {
 	}
 
 	for _, p := range doc.ImagePaths() {
+		if opts.FS != nil {
+			if err := registerFromFS(pdf, opts.FS, p); err != nil {
+				return fmt.Errorf("image %s: %w", p, err)
+			}
+			continue
+		}
 		pdf.RegisterImageOptions(p, fpdf.ImageOptions{ReadDpi: true})
 		if err := pdf.Error(); err != nil {
 			return fmt.Errorf("image %s: %w", p, err)
@@ -77,6 +88,20 @@ func Render(doc *model.Document, w io.Writer, opts Options) error {
 		return err
 	}
 	return pdf.Output(w)
+}
+
+func registerFromFS(pdf *fpdf.Fpdf, fsys fs.FS, name string) error {
+	f, err := fsys.Open(name)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	ext := strings.TrimPrefix(strings.ToLower(path.Ext(name)), ".")
+	if ext == "" {
+		return fmt.Errorf("image file has no extension")
+	}
+	pdf.RegisterImageOptionsReader(name, fpdf.ImageOptions{ImageType: ext, ReadDpi: true}, f)
+	return pdf.Error()
 }
 
 func paint(pdf *fpdf.Fpdf, ops []layout.Op) {

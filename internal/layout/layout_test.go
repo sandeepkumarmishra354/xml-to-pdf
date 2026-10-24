@@ -24,7 +24,7 @@ func layoutSrc(t *testing.T, src string) []Page {
 	if err != nil {
 		t.Fatal(err)
 	}
-	doc, err := model.Build(root, ".")
+	doc, err := model.Build(root, ".", nil)
 	if err != nil {
 		t.Fatal(err)
 	}

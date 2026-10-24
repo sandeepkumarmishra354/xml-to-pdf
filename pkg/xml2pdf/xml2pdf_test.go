@@ -11,6 +11,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"testing/fstest"
 	"time"
 )
 
@@ -191,5 +192,49 @@ func TestMergeData(t *testing.T) {
 	}
 	if got := MergeData(nil, map[string]any{"k": 1}); got["k"] != 1 {
 		t.Errorf("MergeData(nil, ...) = %v", got)
+	}
+}
+
+func TestImagesFromFS(t *testing.T) {
+	logo, err := os.ReadFile("../../examples/logo.png")
+	if err != nil {
+		t.Fatal(err)
+	}
+	fsys := fstest.MapFS{
+		"logo.png":        {Data: logo},
+		"assets/logo.png": {Data: logo},
+	}
+	render := func(src string, opts Options) error {
+		opts.FS = fsys
+		var buf bytes.Buffer
+		err := Render(strings.NewReader(src), &buf, opts)
+		if err == nil && !bytes.Contains(buf.Bytes(), []byte("/Subtype /Image")) {
+			t.Errorf("%s: no image in output", src)
+		}
+		return err
+	}
+	ok := []struct {
+		src  string
+		opts Options
+	}{
+		{`<document><page><img src="logo.png" width="50"/></page></document>`, Options{}},
+		{`<document><resources><image id="l" src="./assets/logo.png"/></resources><page><img ref="l"/></page></document>`, Options{}},
+		{`<document><page><img src="logo.png"/></page></document>`, Options{BaseDir: "assets"}},
+		{`<document><watermark image="l"/><resources><image id="l" src="logo.png"/></resources><page>x</page></document>`, Options{}},
+	}
+	for _, c := range ok {
+		if err := render(c.src, c.opts); err != nil {
+			t.Errorf("%s: %v", c.src, err)
+		}
+	}
+	bad := map[string]string{
+		`<document><page><img src="missing.png"/></page></document>`:   "image not found: missing.png",
+		`<document><page><img src="/etc/logo.png"/></page></document>`: "image path must be relative",
+		`<document><page><img src="../logo.png"/></page></document>`:   "invalid image path",
+	}
+	for src, want := range bad {
+		if err := render(src, Options{}); err == nil || !strings.Contains(err.Error(), want) {
+			t.Errorf("%s: err = %v, want containing %q", src, err, want)
+		}
 	}
 }
